@@ -22,33 +22,31 @@ def test_user_model_crud(db_session):
     user = User(
         username="testuser",
         email="test@example.com",
-        first_name="Test",
-        last_name="User",
+        full_name="Test User",
     )
     db_session.add(user)
     db_session.commit()
-    
+
     # Read the user
     user_id = user.id
     retrieved_user = db_session.query(User).filter(User.id == user_id).first()
     assert retrieved_user is not None
     assert retrieved_user.username == "testuser"
     assert retrieved_user.email == "test@example.com"
-    assert retrieved_user.first_name == "Test"
-    assert retrieved_user.last_name == "User"
-    
+    assert retrieved_user.full_name == "Test User"
+
     # Update the user
-    retrieved_user.first_name = "Updated"
+    retrieved_user.full_name = "Updated User"
     db_session.commit()
-    
+
     # Verify the update
     updated_user = db_session.query(User).filter(User.id == user_id).first()
-    assert updated_user.first_name == "Updated"
-    
+    assert updated_user.full_name == "Updated User"
+
     # Delete the user
     db_session.delete(updated_user)
     db_session.commit()
-    
+
     # Verify the deletion
     deleted_user = db_session.query(User).filter(User.id == user_id).first()
     assert deleted_user is None

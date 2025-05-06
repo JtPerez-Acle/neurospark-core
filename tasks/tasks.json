@@ -219,7 +219,7 @@
         1,
         2
       ],
-      "status": "in-progress",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -238,7 +238,7 @@
             1
           ],
           "details": "Enable robust inter-agent communication with scalable message handling and fault tolerance using Redis Streams.",
-          "status": "in-progress",
+          "status": "done",
           "testStrategy": "Integration test message flow, simulate failures for dead letter and retry logic, and validate consumer group load balancing."
         },
         {
@@ -249,7 +249,7 @@
             2
           ],
           "details": "Use schema validation tools to enforce message structure and support versioning for future extensibility.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Schema validation tests for all message types and compatibility checks across agent versions."
         },
         {
@@ -260,7 +260,7 @@
             3
           ],
           "details": "Integrate with existing infrastructure or implement a lightweight registry to track active agents and their endpoints.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Functional tests for agent registration, lookup, and dynamic updates; simulate agent join/leave scenarios."
         },
         {
@@ -271,7 +271,7 @@
             4
           ],
           "details": "Ensure agents can be managed programmatically and handle shutdowns without data loss or message corruption.",
-          "status": "pending",
+          "status": "done",
           "testStrategy": "Lifecycle tests covering all states and transitions, including shutdown under load and during message processing."
         }
       ]

@@ -49,11 +49,11 @@ class DatabaseSettings(BaseModel):
     db: str = Field("neurospark", description="Database name")
     user: str = Field("postgres", description="Database user")
     password: str = Field("postgres_password", description="Database password")
-    
+
     @property
     def url(self) -> str:
         """Get the database URL.
-        
+
         Returns:
             str: The database URL.
         """
@@ -66,11 +66,11 @@ class QdrantSettings(BaseModel):
     host: str = Field("qdrant", description="Qdrant host")
     port: int = Field(6333, description="Qdrant port")
     grpc_port: int = Field(6334, description="Qdrant gRPC port")
-    
+
     @property
     def url(self) -> str:
         """Get the Qdrant URL.
-        
+
         Returns:
             str: The Qdrant URL.
         """
@@ -82,11 +82,11 @@ class ElasticSettings(BaseModel):
 
     host: str = Field("elasticlite", description="ElasticLite host")
     port: int = Field(9200, description="ElasticLite port")
-    
+
     @property
     def url(self) -> str:
         """Get the ElasticLite URL.
-        
+
         Returns:
             str: The ElasticLite URL.
         """
@@ -101,11 +101,11 @@ class MinioSettings(BaseModel):
     root_user: str = Field("minioadmin", description="MinIO root user")
     root_password: str = Field("minioadmin", description="MinIO root password")
     bucket: str = Field("neurospark", description="MinIO bucket")
-    
+
     @property
     def url(self) -> str:
         """Get the MinIO URL.
-        
+
         Returns:
             str: The MinIO URL.
         """
@@ -118,11 +118,11 @@ class RedisSettings(BaseModel):
     host: str = Field("redis", description="Redis host")
     port: int = Field(6379, description="Redis port")
     password: str = Field("redis_password", description="Redis password")
-    
+
     @property
     def url(self) -> str:
         """Get the Redis URL.
-        
+
         Returns:
             str: The Redis URL.
         """
@@ -169,11 +169,11 @@ class Settings(BaseSettings):
         env_nested_delimiter="__",
         extra="ignore",
     )
-    
+
     # General settings
     environment: Environment = Field(Environment.DEVELOPMENT, description="Environment")
     log_level: LogLevel = Field(LogLevel.INFO, description="Log level")
-    
+
     # Service settings
     api: APISettings = Field(default_factory=APISettings, description="API settings")
     database: DatabaseSettings = Field(default_factory=DatabaseSettings, description="Database settings")
@@ -181,29 +181,32 @@ class Settings(BaseSettings):
     elastic: ElasticSettings = Field(default_factory=ElasticSettings, description="ElasticLite settings")
     minio: MinioSettings = Field(default_factory=MinioSettings, description="MinIO settings")
     redis: RedisSettings = Field(default_factory=RedisSettings, description="Redis settings")
-    
+
     # LLM settings
     llm: LLMSettings = Field(default_factory=LLMSettings, description="LLM settings")
-    
+
     # External API settings
     external_apis: ExternalAPISettings = Field(default_factory=ExternalAPISettings, description="External API settings")
-    
+
     # Agent settings
     agents: AgentSettings = Field(default_factory=AgentSettings, description="Agent settings")
-    
+
     # Resource limits
     resource_limits: ResourceLimits = Field(default_factory=ResourceLimits, description="Resource limits")
-    
+
+    # Configuration directory
+    config_dir: str = Field(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "config"), description="Configuration directory")
+
     @validator("llm", pre=True)
     def validate_llm(cls, v: Any) -> Dict[str, Any]:
         """Validate LLM settings.
-        
+
         Args:
             v: The value to validate.
-            
+
         Returns:
             Dict[str, Any]: The validated value.
-            
+
         Raises:
             ValueError: If the OpenAI API key is missing when using OpenAI.
         """
@@ -213,10 +216,10 @@ class Settings(BaseSettings):
                 if not v["openai_api_key"]:
                     raise ValueError("OpenAI API key is required when using OpenAI provider")
         return v
-    
+
     def get_service_urls(self) -> Dict[str, str]:
         """Get all service URLs.
-        
+
         Returns:
             Dict[str, str]: A dictionary of service URLs.
         """
@@ -235,7 +238,7 @@ settings = Settings()
 
 def get_settings() -> Settings:
     """Get the application settings.
-    
+
     Returns:
         Settings: The application settings.
     """

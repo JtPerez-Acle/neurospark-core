@@ -44,7 +44,7 @@ def test_init_with_host_port():
             collection_name="test_collection",
         )
 
-        mock_client.assert_called_once_with(host="localhost", port=6333)
+        mock_client.assert_called_once_with(host="localhost", port=6333, api_key=None)
         assert store.collection_name == "test_collection"
 
 
@@ -56,7 +56,7 @@ def test_init_with_url():
             collection_name="test_collection",
         )
 
-        mock_client.assert_called_once_with(url="http://localhost:6333")
+        mock_client.assert_called_once_with(url="http://localhost:6333", api_key=None)
         assert store.collection_name == "test_collection"
 
 
