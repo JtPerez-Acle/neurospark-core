@@ -30,3 +30,35 @@
 5. Benchmark processing performance
 6. Test resumability after failures
 7. Validate metadata enrichment
+
+# Subtasks:
+## 1. Implement VectoriserAgent Class [pending]
+### Dependencies: None
+### Description: Create the VectoriserAgent class that extends LLMAgent with document processing and embedding capabilities.
+### Details:
+
+
+## 2. Implement Document Cleaning and Normalization [pending]
+### Dependencies: 5.1
+### Description: Develop the system for cleaning and normalizing raw documents, including HTML/PDF parsing, text extraction, and content normalization.
+### Details:
+
+
+## 3. Implement Document Chunking [pending]
+### Dependencies: 5.2
+### Description: Create the system for chunking documents into appropriate segments for embedding, with overlap and semantic boundaries.
+### Details:
+
+
+## 4. Implement Embedding Generation [pending]
+### Dependencies: 5.3
+### Description: Develop the system for generating embeddings from document chunks using appropriate embedding models.
+### Details:
+
+
+## 5. Implement Vector Storage [pending]
+### Dependencies: 5.4
+### Description: Create the system for storing embeddings in Qdrant and document chunks in the database with appropriate metadata.
+### Details:
+
+

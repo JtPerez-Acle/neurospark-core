@@ -1,6 +1,6 @@
 # Task ID: 12
 # Title: Implement FastAPI and gRPC API Surface
-# Status: pending
+# Status: in-progress
 # Dependencies: 1, 3
 # Priority: high
 # Description: Develop the API surface using FastAPI and gRPC (grpclib) for external communication with the platform.
@@ -28,3 +28,41 @@
 5. Validate OpenAPI documentation
 6. Test SDK functionality
 7. Verify error handling and status codes
+
+# Subtasks:
+## 1. Design API Schema and Endpoints [done]
+### Dependencies: None
+### Description: Define the API schema, endpoints, and data models for the REST API using FastAPI and Pydantic.
+### Details:
+
+
+## 2. Implement User Authentication and Authorization [pending]
+### Dependencies: 12.1
+### Description: Develop the authentication and authorization system for the API, including JWT tokens, role-based access control, and security middleware.
+### Details:
+
+
+## 3. Implement Document Management Endpoints [pending]
+### Dependencies: 12.2
+### Description: Create API endpoints for document upload, retrieval, search, and management.
+### Details:
+
+
+## 4. Implement Lesson and Learning Endpoints [pending]
+### Dependencies: 12.2
+### Description: Create API endpoints for lesson creation, retrieval, and user learning progress tracking.
+### Details:
+
+
+## 5. Define and Implement gRPC Services [pending]
+### Dependencies: 12.1
+### Description: Define Protocol Buffers schemas and implement gRPC services for inter-service communication.
+### Details:
+
+
+## 6. Implement API Documentation and OpenAPI Spec [pending]
+### Dependencies: 12.3, 12.4, 12.5
+### Description: Create comprehensive API documentation using OpenAPI/Swagger and implement interactive documentation endpoints.
+### Details:
+
+

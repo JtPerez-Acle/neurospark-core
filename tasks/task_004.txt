@@ -1,6 +1,6 @@
 # Task ID: 4
 # Title: Implement Curator Agent
-# Status: pending
+# Status: in-progress
 # Dependencies: 3
 # Priority: high
 # Description: Develop the Curator Agent responsible for discovering documents from trusted sources like OpenAlex, NewsAPI, and SerpAPI.
@@ -27,3 +27,41 @@
 5. Validate metadata extraction
 6. Test deduplication logic
 7. Verify scheduling functionality
+
+# Subtasks:
+## 1. Implement CuratorAgent Class [pending]
+### Dependencies: None
+### Description: Create the CuratorAgent class that extends LLMAgent with document discovery capabilities.
+### Details:
+
+
+## 2. Implement OpenAlex Integration [pending]
+### Dependencies: 4.1
+### Description: Develop the integration with OpenAlex API for discovering academic papers and research documents.
+### Details:
+
+
+## 3. Implement NewsAPI Integration [pending]
+### Dependencies: 4.1
+### Description: Develop the integration with NewsAPI for discovering news articles and current events.
+### Details:
+
+
+## 4. Implement SerpAPI Integration [pending]
+### Dependencies: 4.1
+### Description: Develop the integration with SerpAPI for discovering web content through search engine results.
+### Details:
+
+
+## 5. Implement Document Filtering and Validation [pending]
+### Dependencies: 4.2, 4.3, 4.4
+### Description: Create mechanisms for filtering and validating discovered documents based on relevance, quality, and trustworthiness.
+### Details:
+
+
+## 6. Implement Document Storage and Notification [pending]
+### Dependencies: 4.5
+### Description: Develop the system for storing discovered documents in MinIO and notifying the Vectoriser agent about new documents.
+### Details:
+
+

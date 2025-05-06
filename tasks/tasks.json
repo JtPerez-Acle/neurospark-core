@@ -286,8 +286,75 @@
       "dependencies": [
         3
       ],
-      "status": "pending",
-      "subtasks": []
+      "status": "in-progress",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement CuratorAgent Class",
+          "description": "Create the CuratorAgent class that extends LLMAgent with document discovery capabilities.",
+          "details": "",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 4
+        },
+        {
+          "id": 2,
+          "title": "Implement OpenAlex Integration",
+          "description": "Develop the integration with OpenAlex API for discovering academic papers and research documents.",
+          "details": "",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 4
+        },
+        {
+          "id": 3,
+          "title": "Implement NewsAPI Integration",
+          "description": "Develop the integration with NewsAPI for discovering news articles and current events.",
+          "details": "",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 4
+        },
+        {
+          "id": 4,
+          "title": "Implement SerpAPI Integration",
+          "description": "Develop the integration with SerpAPI for discovering web content through search engine results.",
+          "details": "",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 4
+        },
+        {
+          "id": 5,
+          "title": "Implement Document Filtering and Validation",
+          "description": "Create mechanisms for filtering and validating discovered documents based on relevance, quality, and trustworthiness.",
+          "details": "",
+          "status": "pending",
+          "dependencies": [
+            2,
+            3,
+            4
+          ],
+          "parentTaskId": 4
+        },
+        {
+          "id": 6,
+          "title": "Implement Document Storage and Notification",
+          "description": "Develop the system for storing discovered documents in MinIO and notifying the Vectoriser agent about new documents.",
+          "details": "",
+          "status": "pending",
+          "dependencies": [
+            5
+          ],
+          "parentTaskId": 4
+        }
+      ]
     },
     {
       "id": 5,
@@ -301,7 +368,61 @@
         4
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement VectoriserAgent Class",
+          "description": "Create the VectoriserAgent class that extends LLMAgent with document processing and embedding capabilities.",
+          "details": "",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 5
+        },
+        {
+          "id": 2,
+          "title": "Implement Document Cleaning and Normalization",
+          "description": "Develop the system for cleaning and normalizing raw documents, including HTML/PDF parsing, text extraction, and content normalization.",
+          "details": "",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 5
+        },
+        {
+          "id": 3,
+          "title": "Implement Document Chunking",
+          "description": "Create the system for chunking documents into appropriate segments for embedding, with overlap and semantic boundaries.",
+          "details": "",
+          "status": "pending",
+          "dependencies": [
+            2
+          ],
+          "parentTaskId": 5
+        },
+        {
+          "id": 4,
+          "title": "Implement Embedding Generation",
+          "description": "Develop the system for generating embeddings from document chunks using appropriate embedding models.",
+          "details": "",
+          "status": "pending",
+          "dependencies": [
+            3
+          ],
+          "parentTaskId": 5
+        },
+        {
+          "id": 5,
+          "title": "Implement Vector Storage",
+          "description": "Create the system for storing embeddings in Qdrant and document chunks in the database with appropriate metadata.",
+          "details": "",
+          "status": "pending",
+          "dependencies": [
+            4
+          ],
+          "parentTaskId": 5
+        }
+      ]
     },
     {
       "id": 6,
@@ -398,8 +519,75 @@
         1,
         3
       ],
-      "status": "pending",
-      "subtasks": []
+      "status": "in-progress",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Design API Schema and Endpoints",
+          "description": "Define the API schema, endpoints, and data models for the REST API using FastAPI and Pydantic.",
+          "details": "",
+          "status": "done",
+          "dependencies": [],
+          "parentTaskId": 12
+        },
+        {
+          "id": 2,
+          "title": "Implement User Authentication and Authorization",
+          "description": "Develop the authentication and authorization system for the API, including JWT tokens, role-based access control, and security middleware.",
+          "details": "",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 12
+        },
+        {
+          "id": 3,
+          "title": "Implement Document Management Endpoints",
+          "description": "Create API endpoints for document upload, retrieval, search, and management.",
+          "details": "",
+          "status": "pending",
+          "dependencies": [
+            2
+          ],
+          "parentTaskId": 12
+        },
+        {
+          "id": 4,
+          "title": "Implement Lesson and Learning Endpoints",
+          "description": "Create API endpoints for lesson creation, retrieval, and user learning progress tracking.",
+          "details": "",
+          "status": "pending",
+          "dependencies": [
+            2
+          ],
+          "parentTaskId": 12
+        },
+        {
+          "id": 5,
+          "title": "Define and Implement gRPC Services",
+          "description": "Define Protocol Buffers schemas and implement gRPC services for inter-service communication.",
+          "details": "",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 12
+        },
+        {
+          "id": 6,
+          "title": "Implement API Documentation and OpenAPI Spec",
+          "description": "Create comprehensive API documentation using OpenAPI/Swagger and implement interactive documentation endpoints.",
+          "details": "",
+          "status": "pending",
+          "dependencies": [
+            3,
+            4,
+            5
+          ],
+          "parentTaskId": 12
+        }
+      ]
     },
     {
       "id": 13,
