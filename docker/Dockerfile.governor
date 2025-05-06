@@ -1,0 +1,23 @@
+# Governor Agent Dockerfile for NeuroSpark Core
+# This image extends the base image with Governor-specific dependencies
+
+FROM neurospark-base:latest
+
+# Install Governor-specific dependencies
+RUN pip install --no-cache-dir \
+    pyyaml>=6.0 \
+    redis>=4.6.0 \
+    prometheus-client>=0.17.1 \
+    pydantic>=2.0.0 \
+    tenacity>=8.2.2
+
+# Copy Governor service code
+COPY src/agents/governor /app/src/agents/governor
+COPY src/common /app/src/common
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD python -c "import os; exit(0 if os.path.exists('/tmp/governor_health') and (os.time() - os.path.getmtime('/tmp/governor_health')) < 60 else 1)"
+
+# Command to run the Governor agent
+CMD ["python", "-m", "src.agents.governor.main"]

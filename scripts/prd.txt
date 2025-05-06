@@ -1,0 +1,79 @@
+# NeuroSpark Core - Product Requirements Document
+
+## Project Overview
+NeuroSpark Core is an autonomous agentic learning platform designed to be a "school" of specialized Agents. These Agents continuously scout trusted sources, vectorize fresh knowledge, teach humans (or downstream AIs), and never contaminate themselves with hallucinations.
+
+## Key Features and Components
+
+### 1. Agent System
+The platform consists of multiple specialized Agents:
+- **Curator**: Discovers documents from sources like OpenAlex, NewsAPI, and SerpAPI
+- **Vectoriser**: Cleans, chunks, and embeds raw documents into vectors
+- **Professor**: Drafts lessons and answers with citations using vector data
+- **Reviewer**: Validates draft citations via RAG similarity & factuality
+- **Tutor**: Converses with users and tracks mastery
+- **Auditor**: Spot-checks global metrics (relevance, cost, latency)
+- **Custodian**: Performs nightly maintenance (de-duplication, pruning, index rebuilding)
+- **Governor**: Enforces rate-limits and per-Agent budgets
+
+### 2. Grounded-RAG Pipeline
+The system follows a specific pipeline for knowledge processing:
+- Curator discovers documents
+- Vectoriser processes them into embeddings
+- Professor creates drafts
+- Reviewer validates content
+- Tutor delivers to users
+- Custodian maintains the system
+- Auditor ensures quality
+
+### 3. Technical Stack
+- **API Surface**: FastAPI + gRPC (grpclib)
+- **Vector Search**: Llama-Index router with Qdrant (ANN) and ElasticLite (BM25)
+- **Metadata DB**: Postgres 16
+- **Blob Store**: MinIO (S3-compatible)
+- **Message Bus**: Redis Streams (with migration path to NATS)
+- **Scraping**: trafilatura (HTML) and pdfminer-s (PDF)
+- **LLM Provider**: OpenAI gpt-4o (with option to switch to local Llama-3-GGUF)
+- **External APIs**: OpenAlex, NewsAPI, SerpAPI
+
+### 4. Quality Assurance
+- **Reviewer Rules**: Validates content using rougeL and bertscoreF1 metrics
+- **Custodian Rules**: Maintains vector database quality
+- **Relevance Heuristic**: Scoring system for content quality
+- **Test-Driven Development**: Required for all new features
+
+### 5. Modular Capability Pack (MCP)
+- Registry of tools with cost and rate limit tracking
+- Governor enforces budgets and back-offs
+
+## Development Milestones
+1. **α Ingest**: Curator→Vectoriser pipeline stores vectors with passing unit tests
+2. **β Teach**: Professor + Reviewer produce grounded lessons with high accuracy
+3. **γ Audit**: Auditor achieves low false-negative rate; Governor manages budgets
+4. **δ Scale**: Custodian job passes; multi-Cell orchestration; Grafana dashboards
+
+## Technical Requirements
+1. All services must be containerized in Docker
+2. Local development environment via docker-compose
+3. API keys stored in .env file and injected via Docker
+4. Fallback mechanism for external service outages
+5. Test-driven development for all new features
+
+## Implementation Plan
+1. Set up the basic project structure and Docker environment
+2. Implement core database and storage services
+3. Develop the Agent framework and communication system
+4. Build each Agent one by one, starting with Curator and Vectoriser
+5. Implement the Reviewer validation system
+6. Create the Governor for resource management
+7. Develop the Auditor and monitoring systems
+8. Build the Custodian for maintenance tasks
+9. Integrate all components into the complete pipeline
+10. Implement comprehensive testing and validation
+
+## Success Criteria
+- All milestone tests pass in CI
+- Reviewer stops ≥95% of seeded hallucinations
+- Auditor false-negatives ≤2%
+- System can scale with Custodian maintenance
+- Complete documentation and developer guides

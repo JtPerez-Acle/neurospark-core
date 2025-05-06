@@ -1,0 +1,41 @@
+{
+  "global": {
+    "enable_logging": true,
+    "enable_metrics": true,
+    "enable_tracing": false,
+    "enable_caching": true,
+    "enable_rate_limiting": true,
+    "enable_authentication": true,
+    "enable_authorization": true
+  },
+  "development": {
+    "enable_debug": true,
+    "enable_hot_reload": true,
+    "enable_mock_services": true,
+    "enable_test_endpoints": true,
+    "enable_performance_tracking": false,
+    "enable_security_checks": false,
+    "database_pool_size": 5,
+    "cache_ttl_seconds": 60
+  },
+  "staging": {
+    "enable_debug": false,
+    "enable_hot_reload": false,
+    "enable_mock_services": false,
+    "enable_test_endpoints": true,
+    "enable_performance_tracking": true,
+    "enable_security_checks": true,
+    "database_pool_size": 10,
+    "cache_ttl_seconds": 300
+  },
+  "production": {
+    "enable_debug": false,
+    "enable_hot_reload": false,
+    "enable_mock_services": false,
+    "enable_test_endpoints": false,
+    "enable_performance_tracking": true,
+    "enable_security_checks": true,
+    "database_pool_size": 20,
+    "cache_ttl_seconds": 3600
+  }
+}

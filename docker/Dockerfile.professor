@@ -1,0 +1,24 @@
+# Professor Agent Dockerfile for NeuroSpark Core
+# This image extends the base image with Professor-specific dependencies
+
+FROM neurospark-base:latest
+
+# Install Professor-specific dependencies
+RUN pip install --no-cache-dir \
+    openai>=1.0.0 \
+    llama-index>=0.8.0 \
+    qdrant-client>=1.4.0 \
+    langchain>=0.0.267 \
+    markdown>=3.4.3 \
+    jinja2>=3.1.2
+
+# Copy Professor service code
+COPY src/agents/professor /app/src/agents/professor
+COPY src/common /app/src/common
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD python -c "import os; exit(0 if os.path.exists('/tmp/professor_health') and (os.time() - os.path.getmtime('/tmp/professor_health')) < 60 else 1)"
+
+# Command to run the Professor agent
+CMD ["python", "-m", "src.agents.professor.main"]

@@ -1,0 +1,23 @@
+# Curator Agent Dockerfile for NeuroSpark Core
+# This image extends the base image with Curator-specific dependencies
+
+FROM neurospark-base:latest
+
+# Install Curator-specific dependencies
+RUN pip install --no-cache-dir \
+    httpx>=0.24.1 \
+    beautifulsoup4>=4.12.2 \
+    trafilatura>=1.6.0 \
+    feedparser>=6.0.10 \
+    tenacity>=8.2.2
+
+# Copy Curator service code
+COPY src/agents/curator /app/src/agents/curator
+COPY src/common /app/src/common
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD python -c "import os; exit(0 if os.path.exists('/tmp/curator_health') and (os.time() - os.path.getmtime('/tmp/curator_health')) < 60 else 1)"
+
+# Command to run the Curator agent
+CMD ["python", "-m", "src.agents.curator.main"]

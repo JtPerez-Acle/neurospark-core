@@ -1,0 +1,63 @@
+# Task ID: 3
+# Title: Develop Agent Framework and Communication System
+# Status: in-progress
+# Dependencies: 1, 2
+# Priority: high
+# Description: Create the foundational Agent framework and implement the Redis Streams-based message bus for inter-agent communication.
+# Details:
+1. Design base Agent class with common functionality:
+   - Configuration loading
+   - Logging and telemetry
+   - Health reporting
+   - Rate limiting
+   - Error handling
+2. Implement Redis Streams producer/consumer patterns:
+   - Message serialization/deserialization
+   - Consumer groups for load balancing
+   - Dead letter queues for failed messages
+   - Retry logic with exponential backoff
+3. Create message schemas for inter-agent communication
+4. Implement service discovery mechanism
+5. Design migration path to NATS as specified in PRD
+6. Create Agent lifecycle management (start, stop, pause)
+7. Implement graceful shutdown handling
+
+# Test Strategy:
+1. Unit tests for base Agent functionality
+2. Integration tests for message passing between Agents
+3. Stress tests for message bus under load
+4. Test failure recovery scenarios
+5. Validate message schemas
+6. Test service discovery mechanism
+
+# Subtasks:
+## 1. Design and Implement Base Agent Class [done]
+### Dependencies: None
+### Description: Develop the foundational Agent class encapsulating configuration loading, logging, telemetry, health reporting, rate limiting, and error handling.
+### Details:
+Establish a reusable base class that provides core agent functionality, ensuring extensibility for future agent types.
+
+## 2. Develop Redis Streams Message Bus [in-progress]
+### Dependencies: 3.1
+### Description: Implement the Redis Streams-based message bus, including producer/consumer patterns, message serialization/deserialization, consumer groups, dead letter queues, and retry logic.
+### Details:
+Enable robust inter-agent communication with scalable message handling and fault tolerance using Redis Streams.
+
+## 3. Define and Enforce Message Schemas [pending]
+### Dependencies: 3.2
+### Description: Create and validate message schemas for all inter-agent communication to ensure consistency and interoperability.
+### Details:
+Use schema validation tools to enforce message structure and support versioning for future extensibility.
+
+## 4. Implement Service Discovery Mechanism [pending]
+### Dependencies: 3.3
+### Description: Develop a service discovery system to enable agents to locate and communicate with each other dynamically.
+### Details:
+Integrate with existing infrastructure or implement a lightweight registry to track active agents and their endpoints.
+
+## 5. Build Agent Lifecycle and Graceful Shutdown Management [pending]
+### Dependencies: 3.4
+### Description: Implement lifecycle management for agents, including start, stop, pause, and graceful shutdown handling.
+### Details:
+Ensure agents can be managed programmatically and handle shutdowns without data loss or message corruption.
+

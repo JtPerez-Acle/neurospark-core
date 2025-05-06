@@ -1,0 +1,29 @@
+# Task ID: 6
+# Title: Implement Professor Agent
+# Status: pending
+# Dependencies: 3, 5
+# Priority: medium
+# Description: Develop the Professor Agent that drafts lessons and answers with citations using vector data from the knowledge base.
+# Details:
+1. Implement RAG (Retrieval-Augmented Generation) system:
+   - Hybrid search combining Qdrant (ANN) and ElasticLite (BM25)
+   - Relevance scoring and reranking
+2. Create lesson generation using OpenAI gpt-4o:
+   - Prompt engineering for factual responses
+   - Citation generation from source documents
+   - Structured lesson format
+3. Implement answer generation for specific questions
+4. Create citation linking to original sources
+5. Implement fallback to local Llama-3-GGUF model
+6. Add context window management for large lessons
+7. Create draft versioning system
+8. Implement knowledge graph enrichment
+
+# Test Strategy:
+1. Test retrieval accuracy with known queries
+2. Validate citation accuracy against source documents
+3. Test lesson structure and readability
+4. Benchmark generation performance
+5. Test fallback to local models
+6. Validate context window management
+7. Test with various knowledge domains

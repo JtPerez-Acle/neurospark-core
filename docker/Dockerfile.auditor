@@ -1,0 +1,23 @@
+# Auditor Agent Dockerfile for NeuroSpark Core
+# This image extends the base image with Auditor-specific dependencies
+
+FROM neurospark-base:latest
+
+# Install Auditor-specific dependencies
+RUN pip install --no-cache-dir \
+    pandas>=2.0.3 \
+    matplotlib>=3.7.2 \
+    seaborn>=0.12.2 \
+    scikit-learn>=1.3.0 \
+    prometheus-client>=0.17.1
+
+# Copy Auditor service code
+COPY src/agents/auditor /app/src/agents/auditor
+COPY src/common /app/src/common
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD python -c "import os; exit(0 if os.path.exists('/tmp/auditor_health') and (os.time() - os.path.getmtime('/tmp/auditor_health')) < 60 else 1)"
+
+# Command to run the Auditor agent
+CMD ["python", "-m", "src.agents.auditor.main"]

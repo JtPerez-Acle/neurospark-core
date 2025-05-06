@@ -1,0 +1,131 @@
+# Task ID: 1
+# Title: Setup Project Repository and Docker Environment
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Initialize the project repository with Docker configuration for containerization and local development environment via docker-compose.
+# Details:
+1. Create a new Git repository for NeuroSpark Core
+2. Set up a basic project structure with directories for each service/agent
+3. Create a Dockerfile for the base image with common dependencies
+4. Create service-specific Dockerfiles that extend the base image
+5. Set up docker-compose.yml for local development with services for:
+   - FastAPI/gRPC API service
+   - Postgres 16 database
+   - Qdrant vector database
+   - ElasticLite for BM25 search
+   - MinIO for blob storage
+   - Redis for message bus
+6. Configure environment variables and .env file structure
+7. Create a README with setup instructions
+8. Implement basic health check endpoints for each service
+
+# Test Strategy:
+1. Verify all containers build successfully
+2. Ensure containers can communicate with each other
+3. Validate environment variable injection
+4. Test health check endpoints
+5. Verify local development workflow with hot-reloading
+
+# Subtasks:
+## 1. Initialize Git Repository and Project Structure [done]
+### Dependencies: None
+### Description: Create a new Git repository for NeuroSpark Core and set up the basic project structure with directories for each service/agent.
+### Details:
+1. Create a new Git repository on GitHub/GitLab
+2. Initialize local repository with git init
+3. Create README.md with project overview
+4. Set up .gitignore file for Python, Docker, and environment files
+5. Create directories for each service: api/, database/, vector_store/, search/, storage/, message_bus/
+6. Add placeholder files in each directory to maintain structure
+
+## 2. Create Base Dockerfile with Common Dependencies [done]
+### Dependencies: 1.1
+### Description: Create a Dockerfile for the base image that will contain common dependencies used across services.
+### Details:
+1. Create a base Dockerfile in the project root
+2. Use Python 3.11 as the base image
+3. Install common dependencies: fastapi, pydantic, grpcio, sqlalchemy, redis, etc.
+4. Set up virtual environment configuration
+5. Configure Python path and environment variables
+6. Add common utilities and shared code
+7. Optimize the Docker image for size and build speed
+
+## 3. Create Service-Specific Dockerfiles [done]
+### Dependencies: 1.2
+### Description: Create Dockerfiles for each specific service that extend the base image with service-specific dependencies.
+### Details:
+1. Create Dockerfiles in each service directory
+2. Extend from the base image using FROM
+3. Install service-specific dependencies
+4. For API service: add FastAPI and gRPC dependencies
+5. For database services: add respective client libraries
+6. Copy service-specific code
+7. Set appropriate entry points and commands
+8. Configure service-specific environment variables
+
+## 4. Configure Environment Variables and .env Structure [done]
+### Dependencies: 1.1
+### Description: Set up the environment variable configuration and .env file structure for local development and production.
+### Details:
+1. Create a .env.example file with all required variables
+2. Document each environment variable with comments
+3. Set up separate sections for each service
+4. Include database credentials, API keys, and service URLs
+5. Configure development vs production settings
+6. Add instructions for generating secure values
+7. Implement environment variable validation in code
+8. Add .env to .gitignore
+
+## 5. Create docker-compose.yml for Local Development [done]
+### Dependencies: 1.2, 1.3, 1.4
+### Description: Set up docker-compose.yml file to orchestrate all services for local development environment.
+### Details:
+1. Create docker-compose.yml in the project root
+2. Define services for: FastAPI/gRPC API, Postgres 16, Qdrant, ElasticLite, MinIO, and Redis
+3. Configure appropriate ports, volumes, and networks
+4. Set up environment variables using .env file
+5. Configure health checks for each service
+6. Set up dependency order with depends_on
+7. Configure persistent volumes for data storage
+8. Add development-specific settings like hot-reloading
+
+## 6. Implement Health Check Endpoints [done]
+### Dependencies: 1.3
+### Description: Create basic health check endpoints for each service to verify they are running correctly.
+### Details:
+1. Implement /health endpoint for the API service
+2. Create database connection check for Postgres
+3. Implement vector database connectivity check for Qdrant
+4. Add search service health verification for ElasticLite
+5. Create storage service check for MinIO
+6. Implement message bus connectivity check for Redis
+7. Return appropriate status codes and error messages
+8. Add basic metrics like uptime and version
+
+## 7. Create Comprehensive README with Setup Instructions [done]
+### Dependencies: 1.5, 1.6
+### Description: Create a detailed README with project overview, architecture diagram, and setup instructions for developers.
+### Details:
+1. Write project overview and purpose
+2. Create architecture diagram showing service relationships
+3. Document prerequisites (Docker, Git, etc.)
+4. Write step-by-step setup instructions
+5. Include environment configuration guidance
+6. Add development workflow instructions
+7. Document API endpoints and service interactions
+8. Include troubleshooting section for common issues
+
+## 8. Implement CI Pipeline for Docker Builds [done]
+### Dependencies: 1.3, 1.5, 1.6
+### Description: Set up a continuous integration pipeline to automatically build and test Docker images on code changes.
+### Details:
+1. Create GitHub Actions or GitLab CI configuration file
+2. Configure Docker build steps for each service
+3. Set up caching for faster builds
+4. Implement automated testing of built images
+5. Configure health check verification
+6. Set up vulnerability scanning for Docker images
+7. Add notifications for build failures
+8. Configure image tagging and versioning
+

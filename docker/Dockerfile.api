@@ -1,0 +1,29 @@
+# API Service Dockerfile for NeuroSpark Core
+# This image extends the base image with API-specific dependencies
+
+FROM neurospark-base:latest
+
+# Install API-specific dependencies
+RUN pip install --no-cache-dir \
+    fastapi>=0.100.0 \
+    uvicorn>=0.22.0 \
+    grpclib>=0.4.5 \
+    protobuf>=4.23.4 \
+    starlette>=0.27.0 \
+    pydantic-settings>=2.0.0 \
+    python-multipart>=0.0.6
+
+# Copy API service code
+COPY src/api /app/src/api
+COPY src/common /app/src/common
+
+# Expose ports
+EXPOSE 8000
+EXPOSE 50051
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:${API_PORT:-8000}/health || exit 1
+
+# Command to run the API service
+CMD ["python", "-m", "uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

@@ -1,0 +1,80 @@
+# Task ID: 2
+# Title: Implement Core Database and Storage Services
+# Status: done
+# Dependencies: 1
+# Priority: high
+# Description: Set up and configure the core database (Postgres 16), vector stores (Qdrant and ElasticLite), and blob storage (MinIO) with proper schemas and access patterns.
+# Details:
+1. Configure Postgres 16 with schemas for:
+   - Agent metadata and configuration
+   - Document tracking and processing status
+   - User interactions and mastery tracking
+   - System metrics and audit logs
+2. Set up Qdrant for ANN vector search with appropriate indexes
+3. Configure ElasticLite for BM25 text search
+4. Implement MinIO buckets for:
+   - Raw document storage
+   - Processed chunks
+   - Generated lessons
+5. Create database migration scripts
+6. Implement connection pooling and retry logic
+7. Create data access layer with repository pattern
+8. Implement backup and restore procedures
+
+# Test Strategy:
+1. Unit tests for data access layer
+2. Integration tests for database operations
+3. Performance tests for vector search operations
+4. Verify backup and restore functionality
+5. Test connection pooling under load
+6. Validate schema migrations
+
+# Subtasks:
+## 1. Configure Postgres 16 with Core Schemas [done]
+### Dependencies: None
+### Description: Set up Postgres 16 database with the required schemas for agent metadata, document tracking, user interactions, and system metrics.
+### Details:
+Install Postgres 16, create database instance, and implement the following schemas: 1) agents_schema with tables for agent configuration, capabilities, and runtime state; 2) documents_schema with tables for document metadata, processing status, and relationships; 3) users_schema with tables for user profiles, interaction history, and mastery levels; 4) system_schema with tables for metrics, audit logs, and configuration. Use appropriate indexes, constraints, and relationships.
+
+## 2. Set up Qdrant for Vector Search [done]
+### Dependencies: None
+### Description: Configure Qdrant for Approximate Nearest Neighbor (ANN) vector search with appropriate collection structures and indexes.
+### Details:
+Install and configure Qdrant server, create collections for different vector types (document embeddings, semantic search vectors), configure vector dimensions based on embedding models (e.g., 768 for BERT, 1536 for OpenAI embeddings), set up appropriate distance metrics (cosine, dot product), and implement optimal index settings for performance. Create utility functions for vector operations.
+
+## 3. Implement ElasticLite for Text Search [done]
+### Dependencies: None
+### Description: Configure ElasticLite for BM25 text search capabilities with appropriate analyzers and mappings.
+### Details:
+Install ElasticLite, create index templates with appropriate mappings for document content, configure text analyzers (standard, language-specific), set up synonym dictionaries, implement BM25 scoring parameters, and create search templates for common query patterns. Implement utility functions for index management and search operations.
+
+## 4. Configure MinIO Storage Buckets [done]
+### Dependencies: None
+### Description: Set up MinIO object storage with buckets for raw documents, processed chunks, and generated lessons.
+### Details:
+Install and configure MinIO server, create separate buckets for: 1) raw_documents - storing original uploaded files; 2) processed_chunks - storing document segments after processing; 3) generated_lessons - storing system-generated educational content; 4) system_artifacts - storing temporary processing artifacts. Implement appropriate bucket policies, lifecycle rules for retention, and versioning configuration.
+
+## 5. Create Database Migration Scripts [done]
+### Dependencies: 2.1
+### Description: Develop database migration scripts for schema versioning, updates, and rollbacks.
+### Details:
+Implement migration framework using a tool like Flyway or Liquibase, create baseline migration scripts for initial schema creation, develop incremental migration scripts for future updates, implement rollback capabilities, and create a migration CLI tool for operations. Document migration process and version tracking approach.
+
+## 6. Implement Connection Pooling and Retry Logic [done]
+### Dependencies: 2.1, 2.2, 2.3, 2.4
+### Description: Develop robust connection management with pooling, retry logic, and failure handling for all storage services.
+### Details:
+Implement connection pools for Postgres using PgBouncer or similar, create connection managers for Qdrant and ElasticLite with appropriate pool settings, implement exponential backoff retry logic for transient failures, develop circuit breaker pattern for persistent failures, and create unified connection management interface. Configure appropriate timeouts and health checks.
+
+## 7. Create Data Access Layer with Repository Pattern [done]
+### Dependencies: 2.1, 2.2, 2.3, 2.4, 2.6
+### Description: Develop a clean data access layer using the repository pattern to abstract storage implementations.
+### Details:
+Design repository interfaces for each domain entity (Agent, Document, User, etc.), implement concrete repository classes for each storage backend, create factory methods for repository instantiation, implement transaction management across repositories, develop query builders for complex operations, and create data mappers between domain objects and storage formats.
+
+## 8. Implement Backup and Restore Procedures [done]
+### Dependencies: 2.1, 2.2, 2.3, 2.4, 2.7
+### Description: Develop comprehensive backup and restore procedures for all storage services.
+### Details:
+Implement scheduled Postgres backups using pg_dump, create MinIO bucket replication or snapshot procedures, develop Qdrant and ElasticLite snapshot mechanisms, implement backup verification and validation, create restore procedures with data integrity checks, develop backup rotation and retention policies, and create a unified backup management CLI. Document disaster recovery procedures.
+

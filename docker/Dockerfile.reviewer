@@ -1,0 +1,30 @@
+# Reviewer Agent Dockerfile for NeuroSpark Core
+# This image extends the base image with Reviewer-specific dependencies
+
+FROM neurospark-base:latest
+
+# Install Reviewer-specific dependencies
+RUN pip install --no-cache-dir \
+    rouge>=1.0.1 \
+    bert-score>=0.3.13 \
+    transformers>=4.30.2 \
+    torch>=2.0.1 \
+    nltk>=3.8.1 \
+    spacy>=3.6.0
+
+# Download NLTK data
+RUN python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
+
+# Download spaCy model
+RUN python -c "import spacy; spacy.cli.download('en_core_web_sm')"
+
+# Copy Reviewer service code
+COPY src/agents/reviewer /app/src/agents/reviewer
+COPY src/common /app/src/common
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD python -c "import os; exit(0 if os.path.exists('/tmp/reviewer_health') and (os.time() - os.path.getmtime('/tmp/reviewer_health')) < 60 else 1)"
+
+# Command to run the Reviewer agent
+CMD ["python", "-m", "src.agents.reviewer.main"]

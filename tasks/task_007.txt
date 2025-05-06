@@ -1,0 +1,31 @@
+# Task ID: 7
+# Title: Implement Reviewer Agent
+# Status: pending
+# Dependencies: 3, 6
+# Priority: medium
+# Description: Develop the Reviewer Agent that validates draft citations via RAG similarity & factuality checks using rougeL and bertscoreF1 metrics.
+# Details:
+1. Implement citation validation system:
+   - Extract claims and citations from drafts
+   - Retrieve original sources for each citation
+   - Compare claims against sources
+2. Create metric calculation:
+   - Implement rougeL scoring
+   - Implement bertscoreF1 calculation
+   - Create combined factuality score
+3. Implement hallucination detection:
+   - Identify unsupported claims
+   - Flag potential fabrications
+4. Create feedback loop to Professor for corrections
+5. Implement approval/rejection workflow
+6. Create detailed validation reports
+7. Add confidence scoring for validations
+
+# Test Strategy:
+1. Test with known hallucinations to verify detection
+2. Validate metric calculations against reference implementations
+3. Test with various citation styles and formats
+4. Measure false positive and false negative rates
+5. Test feedback loop with Professor
+6. Validate that ≥95% of seeded hallucinations are caught
+7. Benchmark validation performance

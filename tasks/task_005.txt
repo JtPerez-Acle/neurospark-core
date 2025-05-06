@@ -1,0 +1,32 @@
+# Task ID: 5
+# Title: Implement Vectoriser Agent
+# Status: pending
+# Dependencies: 3, 4
+# Priority: high
+# Description: Develop the Vectoriser Agent that cleans, chunks, and embeds raw documents into vectors for storage and retrieval.
+# Details:
+1. Implement document cleaning and preprocessing:
+   - HTML cleaning with trafilatura
+   - PDF extraction with pdfminer-s
+   - Text normalization and sanitization
+2. Create intelligent chunking strategies:
+   - Semantic chunking
+   - Fixed-size chunking
+   - Sliding window with overlap
+3. Implement embedding generation using OpenAI embeddings
+   - Add support for local embedding models as fallback
+4. Create vector storage and indexing in Qdrant
+5. Implement BM25 indexing in ElasticLite
+6. Create metadata enrichment for chunks
+7. Implement batch processing for efficiency
+8. Add progress tracking and resumability
+9. Create vector quality metrics
+
+# Test Strategy:
+1. Unit tests for cleaning and preprocessing
+2. Test chunking strategies with various document types
+3. Validate embedding quality and consistency
+4. Test vector storage and retrieval
+5. Benchmark processing performance
+6. Test resumability after failures
+7. Validate metadata enrichment

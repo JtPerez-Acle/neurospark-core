@@ -1,0 +1,528 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Setup Project Repository and Docker Environment",
+      "description": "Initialize the project repository with Docker configuration for containerization and local development environment via docker-compose.",
+      "details": "1. Create a new Git repository for NeuroSpark Core\n2. Set up a basic project structure with directories for each service/agent\n3. Create a Dockerfile for the base image with common dependencies\n4. Create service-specific Dockerfiles that extend the base image\n5. Set up docker-compose.yml for local development with services for:\n   - FastAPI/gRPC API service\n   - Postgres 16 database\n   - Qdrant vector database\n   - ElasticLite for BM25 search\n   - MinIO for blob storage\n   - Redis for message bus\n6. Configure environment variables and .env file structure\n7. Create a README with setup instructions\n8. Implement basic health check endpoints for each service",
+      "testStrategy": "1. Verify all containers build successfully\n2. Ensure containers can communicate with each other\n3. Validate environment variable injection\n4. Test health check endpoints\n5. Verify local development workflow with hot-reloading",
+      "priority": "high",
+      "dependencies": [],
+      "status": "done",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Initialize Git Repository and Project Structure",
+          "description": "Create a new Git repository for NeuroSpark Core and set up the basic project structure with directories for each service/agent.",
+          "dependencies": [],
+          "details": "1. Create a new Git repository on GitHub/GitLab\n2. Initialize local repository with git init\n3. Create README.md with project overview\n4. Set up .gitignore file for Python, Docker, and environment files\n5. Create directories for each service: api/, database/, vector_store/, search/, storage/, message_bus/\n6. Add placeholder files in each directory to maintain structure",
+          "status": "done",
+          "testStrategy": "Verify all directories exist and can be committed to the repository"
+        },
+        {
+          "id": 2,
+          "title": "Create Base Dockerfile with Common Dependencies",
+          "description": "Create a Dockerfile for the base image that will contain common dependencies used across services.",
+          "dependencies": [
+            1
+          ],
+          "details": "1. Create a base Dockerfile in the project root\n2. Use Python 3.11 as the base image\n3. Install common dependencies: fastapi, pydantic, grpcio, sqlalchemy, redis, etc.\n4. Set up virtual environment configuration\n5. Configure Python path and environment variables\n6. Add common utilities and shared code\n7. Optimize the Docker image for size and build speed",
+          "status": "done",
+          "testStrategy": "Build the base image and verify all dependencies are correctly installed"
+        },
+        {
+          "id": 3,
+          "title": "Create Service-Specific Dockerfiles",
+          "description": "Create Dockerfiles for each specific service that extend the base image with service-specific dependencies.",
+          "dependencies": [
+            2
+          ],
+          "details": "1. Create Dockerfiles in each service directory\n2. Extend from the base image using FROM\n3. Install service-specific dependencies\n4. For API service: add FastAPI and gRPC dependencies\n5. For database services: add respective client libraries\n6. Copy service-specific code\n7. Set appropriate entry points and commands\n8. Configure service-specific environment variables",
+          "status": "done",
+          "testStrategy": "Build each service image and verify it starts without errors"
+        },
+        {
+          "id": 4,
+          "title": "Configure Environment Variables and .env Structure",
+          "description": "Set up the environment variable configuration and .env file structure for local development and production.",
+          "dependencies": [
+            1
+          ],
+          "details": "1. Create a .env.example file with all required variables\n2. Document each environment variable with comments\n3. Set up separate sections for each service\n4. Include database credentials, API keys, and service URLs\n5. Configure development vs production settings\n6. Add instructions for generating secure values\n7. Implement environment variable validation in code\n8. Add .env to .gitignore",
+          "status": "done",
+          "testStrategy": "Verify application can load from .env file and validate required variables"
+        },
+        {
+          "id": 5,
+          "title": "Create docker-compose.yml for Local Development",
+          "description": "Set up docker-compose.yml file to orchestrate all services for local development environment.",
+          "dependencies": [
+            2,
+            3,
+            4
+          ],
+          "details": "1. Create docker-compose.yml in the project root\n2. Define services for: FastAPI/gRPC API, Postgres 16, Qdrant, ElasticLite, MinIO, and Redis\n3. Configure appropriate ports, volumes, and networks\n4. Set up environment variables using .env file\n5. Configure health checks for each service\n6. Set up dependency order with depends_on\n7. Configure persistent volumes for data storage\n8. Add development-specific settings like hot-reloading",
+          "status": "done",
+          "testStrategy": "Run docker-compose up and verify all services start correctly and can communicate"
+        },
+        {
+          "id": 6,
+          "title": "Implement Health Check Endpoints",
+          "description": "Create basic health check endpoints for each service to verify they are running correctly.",
+          "dependencies": [
+            3
+          ],
+          "details": "1. Implement /health endpoint for the API service\n2. Create database connection check for Postgres\n3. Implement vector database connectivity check for Qdrant\n4. Add search service health verification for ElasticLite\n5. Create storage service check for MinIO\n6. Implement message bus connectivity check for Redis\n7. Return appropriate status codes and error messages\n8. Add basic metrics like uptime and version",
+          "status": "done",
+          "testStrategy": "Test each health endpoint and verify it returns 200 OK when service is healthy and appropriate error when not"
+        },
+        {
+          "id": 7,
+          "title": "Create Comprehensive README with Setup Instructions",
+          "description": "Create a detailed README with project overview, architecture diagram, and setup instructions for developers.",
+          "dependencies": [
+            5,
+            6
+          ],
+          "details": "1. Write project overview and purpose\n2. Create architecture diagram showing service relationships\n3. Document prerequisites (Docker, Git, etc.)\n4. Write step-by-step setup instructions\n5. Include environment configuration guidance\n6. Add development workflow instructions\n7. Document API endpoints and service interactions\n8. Include troubleshooting section for common issues",
+          "status": "done",
+          "testStrategy": "Have a team member follow the instructions to verify they can set up the environment successfully"
+        },
+        {
+          "id": 8,
+          "title": "Implement CI Pipeline for Docker Builds",
+          "description": "Set up a continuous integration pipeline to automatically build and test Docker images on code changes.",
+          "dependencies": [
+            3,
+            5,
+            6
+          ],
+          "details": "1. Create GitHub Actions or GitLab CI configuration file\n2. Configure Docker build steps for each service\n3. Set up caching for faster builds\n4. Implement automated testing of built images\n5. Configure health check verification\n6. Set up vulnerability scanning for Docker images\n7. Add notifications for build failures\n8. Configure image tagging and versioning",
+          "status": "done",
+          "testStrategy": "Push a change to the repository and verify the CI pipeline builds and tests all Docker images correctly"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Implement Core Database and Storage Services",
+      "description": "Set up and configure the core database (Postgres 16), vector stores (Qdrant and ElasticLite), and blob storage (MinIO) with proper schemas and access patterns.",
+      "details": "1. Configure Postgres 16 with schemas for:\n   - Agent metadata and configuration\n   - Document tracking and processing status\n   - User interactions and mastery tracking\n   - System metrics and audit logs\n2. Set up Qdrant for ANN vector search with appropriate indexes\n3. Configure ElasticLite for BM25 text search\n4. Implement MinIO buckets for:\n   - Raw document storage\n   - Processed chunks\n   - Generated lessons\n5. Create database migration scripts\n6. Implement connection pooling and retry logic\n7. Create data access layer with repository pattern\n8. Implement backup and restore procedures",
+      "testStrategy": "1. Unit tests for data access layer\n2. Integration tests for database operations\n3. Performance tests for vector search operations\n4. Verify backup and restore functionality\n5. Test connection pooling under load\n6. Validate schema migrations",
+      "priority": "high",
+      "dependencies": [
+        1
+      ],
+      "status": "done",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Configure Postgres 16 with Core Schemas",
+          "description": "Set up Postgres 16 database with the required schemas for agent metadata, document tracking, user interactions, and system metrics.",
+          "dependencies": [],
+          "details": "Install Postgres 16, create database instance, and implement the following schemas: 1) agents_schema with tables for agent configuration, capabilities, and runtime state; 2) documents_schema with tables for document metadata, processing status, and relationships; 3) users_schema with tables for user profiles, interaction history, and mastery levels; 4) system_schema with tables for metrics, audit logs, and configuration. Use appropriate indexes, constraints, and relationships.",
+          "status": "done",
+          "testStrategy": "Write unit tests for schema validation, create test data fixtures, and verify constraint enforcement. Test database performance with sample workloads."
+        },
+        {
+          "id": 2,
+          "title": "Set up Qdrant for Vector Search",
+          "description": "Configure Qdrant for Approximate Nearest Neighbor (ANN) vector search with appropriate collection structures and indexes.",
+          "dependencies": [],
+          "details": "Install and configure Qdrant server, create collections for different vector types (document embeddings, semantic search vectors), configure vector dimensions based on embedding models (e.g., 768 for BERT, 1536 for OpenAI embeddings), set up appropriate distance metrics (cosine, dot product), and implement optimal index settings for performance. Create utility functions for vector operations.",
+          "status": "done",
+          "testStrategy": "Test vector insertion, retrieval accuracy with known similar vectors, and query performance under various loads."
+        },
+        {
+          "id": 3,
+          "title": "Implement ElasticLite for Text Search",
+          "description": "Configure ElasticLite for BM25 text search capabilities with appropriate analyzers and mappings.",
+          "dependencies": [],
+          "details": "Install ElasticLite, create index templates with appropriate mappings for document content, configure text analyzers (standard, language-specific), set up synonym dictionaries, implement BM25 scoring parameters, and create search templates for common query patterns. Implement utility functions for index management and search operations.",
+          "status": "done",
+          "testStrategy": "Test search accuracy with sample documents, verify analyzer behavior with edge cases, and benchmark query performance."
+        },
+        {
+          "id": 4,
+          "title": "Configure MinIO Storage Buckets",
+          "description": "Set up MinIO object storage with buckets for raw documents, processed chunks, and generated lessons.",
+          "dependencies": [],
+          "details": "Install and configure MinIO server, create separate buckets for: 1) raw_documents - storing original uploaded files; 2) processed_chunks - storing document segments after processing; 3) generated_lessons - storing system-generated educational content; 4) system_artifacts - storing temporary processing artifacts. Implement appropriate bucket policies, lifecycle rules for retention, and versioning configuration.",
+          "status": "done",
+          "testStrategy": "Test upload/download operations, verify bucket policies with different access patterns, and check versioning behavior."
+        },
+        {
+          "id": 5,
+          "title": "Create Database Migration Scripts",
+          "description": "Develop database migration scripts for schema versioning, updates, and rollbacks.",
+          "dependencies": [
+            1
+          ],
+          "details": "Implement migration framework using a tool like Flyway or Liquibase, create baseline migration scripts for initial schema creation, develop incremental migration scripts for future updates, implement rollback capabilities, and create a migration CLI tool for operations. Document migration process and version tracking approach.",
+          "status": "done",
+          "testStrategy": "Test migration process in isolated environments, verify forward and rollback migrations, and ensure data integrity during schema changes."
+        },
+        {
+          "id": 6,
+          "title": "Implement Connection Pooling and Retry Logic",
+          "description": "Develop robust connection management with pooling, retry logic, and failure handling for all storage services.",
+          "dependencies": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "details": "Implement connection pools for Postgres using PgBouncer or similar, create connection managers for Qdrant and ElasticLite with appropriate pool settings, implement exponential backoff retry logic for transient failures, develop circuit breaker pattern for persistent failures, and create unified connection management interface. Configure appropriate timeouts and health checks.",
+          "status": "done",
+          "testStrategy": "Test connection recovery under simulated failures, verify pool behavior under load, and measure performance impact of different pool configurations."
+        },
+        {
+          "id": 7,
+          "title": "Create Data Access Layer with Repository Pattern",
+          "description": "Develop a clean data access layer using the repository pattern to abstract storage implementations.",
+          "dependencies": [
+            1,
+            2,
+            3,
+            4,
+            6
+          ],
+          "details": "Design repository interfaces for each domain entity (Agent, Document, User, etc.), implement concrete repository classes for each storage backend, create factory methods for repository instantiation, implement transaction management across repositories, develop query builders for complex operations, and create data mappers between domain objects and storage formats.",
+          "status": "done",
+          "testStrategy": "Write unit tests with mocked storage backends, integration tests with test containers, and verify transaction behavior across multiple repositories."
+        },
+        {
+          "id": 8,
+          "title": "Implement Backup and Restore Procedures",
+          "description": "Develop comprehensive backup and restore procedures for all storage services.",
+          "dependencies": [
+            1,
+            2,
+            3,
+            4,
+            7
+          ],
+          "details": "Implement scheduled Postgres backups using pg_dump, create MinIO bucket replication or snapshot procedures, develop Qdrant and ElasticLite snapshot mechanisms, implement backup verification and validation, create restore procedures with data integrity checks, develop backup rotation and retention policies, and create a unified backup management CLI. Document disaster recovery procedures.",
+          "status": "done",
+          "testStrategy": "Test full backup and restore cycles in isolated environments, verify data integrity after restore, and measure backup/restore performance with various data volumes."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Develop Agent Framework and Communication System",
+      "description": "Create the foundational Agent framework and implement the Redis Streams-based message bus for inter-agent communication.",
+      "details": "1. Design base Agent class with common functionality:\n   - Configuration loading\n   - Logging and telemetry\n   - Health reporting\n   - Rate limiting\n   - Error handling\n2. Implement Redis Streams producer/consumer patterns:\n   - Message serialization/deserialization\n   - Consumer groups for load balancing\n   - Dead letter queues for failed messages\n   - Retry logic with exponential backoff\n3. Create message schemas for inter-agent communication\n4. Implement service discovery mechanism\n5. Design migration path to NATS as specified in PRD\n6. Create Agent lifecycle management (start, stop, pause)\n7. Implement graceful shutdown handling",
+      "testStrategy": "1. Unit tests for base Agent functionality\n2. Integration tests for message passing between Agents\n3. Stress tests for message bus under load\n4. Test failure recovery scenarios\n5. Validate message schemas\n6. Test service discovery mechanism",
+      "priority": "high",
+      "dependencies": [
+        1,
+        2
+      ],
+      "status": "in-progress",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Design and Implement Base Agent Class",
+          "description": "Develop the foundational Agent class encapsulating configuration loading, logging, telemetry, health reporting, rate limiting, and error handling.",
+          "dependencies": [],
+          "details": "Establish a reusable base class that provides core agent functionality, ensuring extensibility for future agent types.",
+          "status": "done",
+          "testStrategy": "Unit test each component (configuration, logging, telemetry, etc.) and verify correct initialization and error handling."
+        },
+        {
+          "id": 2,
+          "title": "Develop Redis Streams Message Bus",
+          "description": "Implement the Redis Streams-based message bus, including producer/consumer patterns, message serialization/deserialization, consumer groups, dead letter queues, and retry logic.",
+          "dependencies": [
+            1
+          ],
+          "details": "Enable robust inter-agent communication with scalable message handling and fault tolerance using Redis Streams.",
+          "status": "in-progress",
+          "testStrategy": "Integration test message flow, simulate failures for dead letter and retry logic, and validate consumer group load balancing."
+        },
+        {
+          "id": 3,
+          "title": "Define and Enforce Message Schemas",
+          "description": "Create and validate message schemas for all inter-agent communication to ensure consistency and interoperability.",
+          "dependencies": [
+            2
+          ],
+          "details": "Use schema validation tools to enforce message structure and support versioning for future extensibility.",
+          "status": "pending",
+          "testStrategy": "Schema validation tests for all message types and compatibility checks across agent versions."
+        },
+        {
+          "id": 4,
+          "title": "Implement Service Discovery Mechanism",
+          "description": "Develop a service discovery system to enable agents to locate and communicate with each other dynamically.",
+          "dependencies": [
+            3
+          ],
+          "details": "Integrate with existing infrastructure or implement a lightweight registry to track active agents and their endpoints.",
+          "status": "pending",
+          "testStrategy": "Functional tests for agent registration, lookup, and dynamic updates; simulate agent join/leave scenarios."
+        },
+        {
+          "id": 5,
+          "title": "Build Agent Lifecycle and Graceful Shutdown Management",
+          "description": "Implement lifecycle management for agents, including start, stop, pause, and graceful shutdown handling.",
+          "dependencies": [
+            4
+          ],
+          "details": "Ensure agents can be managed programmatically and handle shutdowns without data loss or message corruption.",
+          "status": "pending",
+          "testStrategy": "Lifecycle tests covering all states and transitions, including shutdown under load and during message processing."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Implement Curator Agent",
+      "description": "Develop the Curator Agent responsible for discovering documents from trusted sources like OpenAlex, NewsAPI, and SerpAPI.",
+      "details": "1. Implement API clients for data sources:\n   - OpenAlex client for academic papers\n   - NewsAPI client for news articles\n   - SerpAPI client for web search results\n2. Create document discovery strategies for each source\n3. Implement scheduling logic for periodic discovery\n4. Design document metadata extraction\n5. Create source credibility scoring system\n6. Implement rate limiting and quota management\n7. Add fallback mechanisms for API outages\n8. Create document deduplication logic\n9. Implement document priority queue based on relevance\n10. Add support for custom source plugins",
+      "testStrategy": "1. Unit tests for each API client\n2. Mock tests for API responses\n3. Integration tests with actual APIs (with rate limiting)\n4. Test fallback mechanisms\n5. Validate metadata extraction\n6. Test deduplication logic\n7. Verify scheduling functionality",
+      "priority": "high",
+      "dependencies": [
+        3
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 5,
+      "title": "Implement Vectoriser Agent",
+      "description": "Develop the Vectoriser Agent that cleans, chunks, and embeds raw documents into vectors for storage and retrieval.",
+      "details": "1. Implement document cleaning and preprocessing:\n   - HTML cleaning with trafilatura\n   - PDF extraction with pdfminer-s\n   - Text normalization and sanitization\n2. Create intelligent chunking strategies:\n   - Semantic chunking\n   - Fixed-size chunking\n   - Sliding window with overlap\n3. Implement embedding generation using OpenAI embeddings\n   - Add support for local embedding models as fallback\n4. Create vector storage and indexing in Qdrant\n5. Implement BM25 indexing in ElasticLite\n6. Create metadata enrichment for chunks\n7. Implement batch processing for efficiency\n8. Add progress tracking and resumability\n9. Create vector quality metrics",
+      "testStrategy": "1. Unit tests for cleaning and preprocessing\n2. Test chunking strategies with various document types\n3. Validate embedding quality and consistency\n4. Test vector storage and retrieval\n5. Benchmark processing performance\n6. Test resumability after failures\n7. Validate metadata enrichment",
+      "priority": "high",
+      "dependencies": [
+        3,
+        4
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 6,
+      "title": "Implement Professor Agent",
+      "description": "Develop the Professor Agent that drafts lessons and answers with citations using vector data from the knowledge base.",
+      "details": "1. Implement RAG (Retrieval-Augmented Generation) system:\n   - Hybrid search combining Qdrant (ANN) and ElasticLite (BM25)\n   - Relevance scoring and reranking\n2. Create lesson generation using OpenAI gpt-4o:\n   - Prompt engineering for factual responses\n   - Citation generation from source documents\n   - Structured lesson format\n3. Implement answer generation for specific questions\n4. Create citation linking to original sources\n5. Implement fallback to local Llama-3-GGUF model\n6. Add context window management for large lessons\n7. Create draft versioning system\n8. Implement knowledge graph enrichment",
+      "testStrategy": "1. Test retrieval accuracy with known queries\n2. Validate citation accuracy against source documents\n3. Test lesson structure and readability\n4. Benchmark generation performance\n5. Test fallback to local models\n6. Validate context window management\n7. Test with various knowledge domains",
+      "priority": "medium",
+      "dependencies": [
+        3,
+        5
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 7,
+      "title": "Implement Reviewer Agent",
+      "description": "Develop the Reviewer Agent that validates draft citations via RAG similarity & factuality checks using rougeL and bertscoreF1 metrics.",
+      "details": "1. Implement citation validation system:\n   - Extract claims and citations from drafts\n   - Retrieve original sources for each citation\n   - Compare claims against sources\n2. Create metric calculation:\n   - Implement rougeL scoring\n   - Implement bertscoreF1 calculation\n   - Create combined factuality score\n3. Implement hallucination detection:\n   - Identify unsupported claims\n   - Flag potential fabrications\n4. Create feedback loop to Professor for corrections\n5. Implement approval/rejection workflow\n6. Create detailed validation reports\n7. Add confidence scoring for validations",
+      "testStrategy": "1. Test with known hallucinations to verify detection\n2. Validate metric calculations against reference implementations\n3. Test with various citation styles and formats\n4. Measure false positive and false negative rates\n5. Test feedback loop with Professor\n6. Validate that ≥95% of seeded hallucinations are caught\n7. Benchmark validation performance",
+      "priority": "medium",
+      "dependencies": [
+        3,
+        6
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 8,
+      "title": "Implement Tutor Agent",
+      "description": "Develop the Tutor Agent that converses with users, delivers lessons, and tracks mastery of topics.",
+      "details": "1. Implement conversation management:\n   - User session handling\n   - Context tracking across interactions\n   - Conversation history management\n2. Create lesson delivery system:\n   - Progressive disclosure of content\n   - Adaptive pacing based on user responses\n3. Implement mastery tracking:\n   - Topic-based knowledge assessment\n   - Spaced repetition algorithms\n   - Learning progress visualization\n4. Create personalized learning paths\n5. Implement question answering with citations\n6. Add interactive exercises and quizzes\n7. Create feedback collection mechanism",
+      "testStrategy": "1. Test conversation flow and context retention\n2. Validate lesson delivery with various content types\n3. Test mastery tracking algorithms\n4. Verify personalization effectiveness\n5. Test question answering accuracy\n6. Validate citation presentation\n7. Test with simulated user interactions",
+      "priority": "medium",
+      "dependencies": [
+        3,
+        7
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 9,
+      "title": "Implement Governor Agent",
+      "description": "Develop the Governor Agent that enforces rate-limits and per-Agent budgets for resource management.",
+      "details": "1. Implement Modular Capability Pack (MCP) registry:\n   - Tool registration system\n   - Cost tracking per operation\n   - Rate limit configuration\n2. Create budget enforcement system:\n   - Per-Agent budget allocation\n   - Usage tracking and reporting\n   - Budget alerts and notifications\n3. Implement rate limiting:\n   - Token bucket algorithm\n   - Adaptive rate limiting based on service health\n   - Backoff strategies\n4. Create priority-based resource allocation\n5. Implement quota management for external APIs\n6. Add budget forecasting and optimization\n7. Create emergency shutdown procedures for budget overruns",
+      "testStrategy": "1. Test budget enforcement under various loads\n2. Validate rate limiting effectiveness\n3. Test priority-based allocation\n4. Verify quota management for external APIs\n5. Test budget alerts and notifications\n6. Validate emergency procedures\n7. Benchmark overhead of Governor operations",
+      "priority": "medium",
+      "dependencies": [
+        3
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 10,
+      "title": "Implement Auditor Agent",
+      "description": "Develop the Auditor Agent that spot-checks global metrics for relevance, cost, and latency with a low false-negative rate.",
+      "details": "1. Implement metric collection system:\n   - Relevance scoring for content\n   - Cost tracking per operation\n   - Latency measurement\n   - Error rate monitoring\n2. Create sampling strategies for spot-checks:\n   - Random sampling\n   - Stratified sampling\n   - Targeted sampling for high-risk areas\n3. Implement validation workflows:\n   - Automated checks\n   - Manual review triggers\n4. Create anomaly detection:\n   - Statistical outlier detection\n   - Trend analysis\n5. Implement reporting and alerting\n6. Create continuous improvement recommendations\n7. Add false-negative tracking and optimization",
+      "testStrategy": "1. Test with known issues to verify detection\n2. Validate sampling strategies for coverage\n3. Test anomaly detection with simulated anomalies\n4. Measure false-negative rate (target ≤2%)\n5. Test reporting and alerting mechanisms\n6. Validate recommendation quality\n7. Benchmark auditing performance impact",
+      "priority": "medium",
+      "dependencies": [
+        3,
+        7,
+        9
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 11,
+      "title": "Implement Custodian Agent",
+      "description": "Develop the Custodian Agent that performs nightly maintenance tasks such as de-duplication, pruning, and index rebuilding.",
+      "details": "1. Implement maintenance job scheduler:\n   - Cron-based scheduling\n   - Dependency management between jobs\n   - Failure recovery\n2. Create maintenance tasks:\n   - Vector database deduplication\n   - Content pruning based on relevance and age\n   - Index rebuilding and optimization\n   - Database vacuuming and optimization\n   - Storage cleanup\n3. Implement progress tracking and reporting\n4. Create maintenance logs and audit trails\n5. Add performance impact monitoring\n6. Implement maintenance windows\n7. Create emergency maintenance procedures",
+      "testStrategy": "1. Test each maintenance task individually\n2. Validate scheduling and dependency management\n3. Test failure recovery\n4. Measure performance impact during maintenance\n5. Verify data integrity after maintenance\n6. Test with large datasets\n7. Validate logging and reporting",
+      "priority": "medium",
+      "dependencies": [
+        3,
+        5
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 12,
+      "title": "Implement FastAPI and gRPC API Surface",
+      "description": "Develop the API surface using FastAPI and gRPC (grpclib) for external communication with the platform.",
+      "details": "1. Design API schema and endpoints:\n   - RESTful endpoints with FastAPI\n   - gRPC service definitions\n   - OpenAPI documentation\n2. Implement authentication and authorization:\n   - API key validation\n   - Role-based access control\n   - Rate limiting\n3. Create request validation and error handling\n4. Implement versioning strategy\n5. Add request logging and monitoring\n6. Create SDK for client applications\n7. Implement health check and status endpoints\n8. Add documentation generation",
+      "testStrategy": "1. Unit tests for each endpoint\n2. Integration tests for API flows\n3. Load testing for performance\n4. Security testing for authentication\n5. Validate OpenAPI documentation\n6. Test SDK functionality\n7. Verify error handling and status codes",
+      "priority": "high",
+      "dependencies": [
+        1,
+        3
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 13,
+      "title": "Implement Monitoring and Observability",
+      "description": "Set up comprehensive monitoring and observability with Grafana dashboards for system health and performance tracking.",
+      "details": "1. Implement logging infrastructure:\n   - Structured logging\n   - Log aggregation\n   - Log retention policies\n2. Set up metrics collection:\n   - System metrics (CPU, memory, disk)\n   - Application metrics (throughput, latency)\n   - Business metrics (documents processed, lessons created)\n3. Create Grafana dashboards:\n   - System overview\n   - Per-Agent performance\n   - Pipeline throughput\n   - Error rates and types\n4. Implement alerting rules and notifications\n5. Create tracing for request flows\n6. Add performance profiling\n7. Implement SLO/SLI tracking",
+      "testStrategy": "1. Verify metrics collection accuracy\n2. Test dashboard functionality\n3. Validate alerting rules\n4. Test tracing across services\n5. Verify log aggregation\n6. Test under various load conditions\n7. Validate SLO/SLI calculations",
+      "priority": "medium",
+      "dependencies": [
+        1,
+        3
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 14,
+      "title": "Implement Multi-Cell Orchestration",
+      "description": "Develop the orchestration system for managing multiple NeuroSpark cells for horizontal scaling.",
+      "details": "1. Design cell architecture:\n   - Cell definition and boundaries\n   - Inter-cell communication\n   - Resource allocation\n2. Implement cell management:\n   - Cell creation and deletion\n   - Cell health monitoring\n   - Load balancing between cells\n3. Create data partitioning strategies\n4. Implement cross-cell queries\n5. Add cell-specific configuration\n6. Create cell failover mechanisms\n7. Implement cell scaling policies",
+      "testStrategy": "1. Test cell creation and management\n2. Validate inter-cell communication\n3. Test load balancing effectiveness\n4. Verify data partitioning\n5. Test cross-cell queries\n6. Validate failover mechanisms\n7. Test scaling under load",
+      "priority": "low",
+      "dependencies": [
+        3,
+        9,
+        11,
+        13
+      ],
+      "status": "pending",
+      "subtasks": []
+    },
+    {
+      "id": 15,
+      "title": "Implement Comprehensive Testing and CI/CD Pipeline",
+      "description": "Set up comprehensive testing framework and CI/CD pipeline for continuous integration and deployment.",
+      "details": "1. Implement testing framework:\n   - Unit testing setup\n   - Integration testing\n   - End-to-end testing\n   - Performance testing\n   - Security testing\n2. Create test data generation:\n   - Mock data generators\n   - Test fixtures\n   - Seeded hallucinations for Reviewer testing\n3. Set up CI/CD pipeline:\n   - Automated builds\n   - Test execution\n   - Code quality checks\n   - Security scanning\n   - Deployment automation\n4. Implement feature flags\n5. Create release management process\n6. Add automated documentation generation\n7. Implement code coverage tracking",
+      "testStrategy": "1. Verify test coverage across components\n2. Validate CI/CD pipeline functionality\n3. Test feature flag system\n4. Verify documentation generation\n5. Test release process\n6. Validate code quality checks\n7. Test security scanning effectiveness",
+      "priority": "high",
+      "dependencies": [
+        1
+      ],
+      "status": "done",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Set Up Unit Testing Framework",
+          "description": "Implement a unit testing framework to test individual components and functions in isolation.",
+          "dependencies": [],
+          "details": "Select and configure a testing framework (Jest, Mocha, etc.) appropriate for the project's tech stack. Create initial test configuration files, set up directory structure for tests, and implement sample unit tests for core components. Configure test runners and reporting tools.",
+          "status": "done",
+          "testStrategy": "Verify test framework installation by running sample tests and confirming proper reporting."
+        },
+        {
+          "id": 2,
+          "title": "Implement Integration and E2E Testing",
+          "description": "Set up integration testing to verify component interactions and end-to-end testing to validate complete user flows.",
+          "dependencies": [
+            1
+          ],
+          "details": "Configure integration testing tools to test API endpoints and service interactions. Set up E2E testing framework (Cypress, Selenium, etc.) with test environments. Create test scripts for critical user journeys and API workflows. Implement test reporting and failure analysis.",
+          "status": "done",
+          "testStrategy": "Validate by running tests against staging environment and verifying they catch intentionally introduced errors."
+        },
+        {
+          "id": 3,
+          "title": "Create Test Data Generation System",
+          "description": "Develop a system for generating consistent test data, fixtures, and mock objects for all testing levels.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Implement data factories and generators for creating test entities. Create mock service responses for external dependencies. Develop seeded data generation for reviewer testing. Set up database fixtures and test environment seeding scripts. Ensure data is consistent across test environments.",
+          "status": "done",
+          "testStrategy": "Verify by using generated data in existing tests and confirming data integrity and consistency."
+        },
+        {
+          "id": 4,
+          "title": "Set Up Continuous Integration Pipeline",
+          "description": "Configure CI pipeline for automated building, testing, and quality checks on code changes.",
+          "dependencies": [
+            1,
+            2,
+            3
+          ],
+          "details": "Set up CI platform (GitHub Actions, Jenkins, CircleCI, etc.). Configure automated builds for all code changes. Implement test execution in the pipeline including unit, integration, and E2E tests. Add code quality checks (linting, formatting). Configure notifications for build/test failures.",
+          "status": "done",
+          "testStrategy": "Test by making sample PRs with both passing and failing tests to verify pipeline behavior."
+        },
+        {
+          "id": 5,
+          "title": "Implement Security and Performance Testing",
+          "description": "Add security scanning and performance testing to the testing framework and CI pipeline.",
+          "dependencies": [
+            4
+          ],
+          "details": "Integrate security scanning tools (SAST, dependency scanning). Set up performance testing framework with benchmarks for critical operations. Configure load testing for key endpoints. Add security and performance test execution to CI pipeline. Implement reporting and alerting for security vulnerabilities and performance regressions.",
+          "status": "done",
+          "testStrategy": "Verify by introducing known security vulnerabilities and performance bottlenecks to confirm detection."
+        },
+        {
+          "id": 6,
+          "title": "Configure Continuous Deployment Pipeline",
+          "description": "Extend CI pipeline to include automated deployment to various environments with proper controls and rollback capabilities.",
+          "dependencies": [
+            4,
+            5
+          ],
+          "details": "Set up deployment automation to dev, staging, and production environments. Implement feature flags for controlled feature rollouts. Configure deployment approvals and gates. Add post-deployment verification tests. Implement automated rollback mechanisms for failed deployments. Create deployment notifications and changelog generation.",
+          "status": "done",
+          "testStrategy": "Test by deploying to staging environment and verifying both successful deployments and proper rollback behavior."
+        },
+        {
+          "id": 7,
+          "title": "Implement Documentation and Metrics Collection",
+          "description": "Add automated documentation generation, code coverage tracking, and quality metrics collection to the pipeline.",
+          "dependencies": [
+            6
+          ],
+          "details": "Configure code coverage tools and set minimum coverage thresholds. Set up automated API documentation generation. Implement quality metrics collection and trending (complexity, duplication, etc.). Create dashboards for visualizing test results, coverage, and quality metrics. Set up regular reporting of metrics to stakeholders.",
+          "status": "done",
+          "testStrategy": "Verify by checking generated documentation and metrics after pipeline runs to ensure accuracy and completeness."
+        }
+      ]
+    }
+  ]
+}

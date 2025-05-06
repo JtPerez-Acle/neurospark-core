@@ -1,0 +1,62 @@
+[
+  {
+    "id": "hall-001",
+    "original_text": "This is the original text 1.",
+    "hallucinated_text": "This is the hallucinated text 1.",
+    "explanation": "This is the explanation for hallucination 1."
+  },
+  {
+    "id": "hall-002",
+    "original_text": "This is the original text 2.",
+    "hallucinated_text": "This is the hallucinated text 2.",
+    "explanation": "This is the explanation for hallucination 2."
+  },
+  {
+    "id": "hall-003",
+    "original_text": "This is the original text 3.",
+    "hallucinated_text": "This is the hallucinated text 3.",
+    "explanation": "This is the explanation for hallucination 3."
+  },
+  {
+    "id": "hall-004",
+    "original_text": "This is the original text 4.",
+    "hallucinated_text": "This is the hallucinated text 4.",
+    "explanation": "This is the explanation for hallucination 4."
+  },
+  {
+    "id": "hall-005",
+    "original_text": "This is the original text 5.",
+    "hallucinated_text": "This is the hallucinated text 5.",
+    "explanation": "This is the explanation for hallucination 5."
+  },
+  {
+    "id": "hall-006",
+    "original_text": "This is the original text 6.",
+    "hallucinated_text": "This is the hallucinated text 6.",
+    "explanation": "This is the explanation for hallucination 6."
+  },
+  {
+    "id": "hall-007",
+    "original_text": "This is the original text 7.",
+    "hallucinated_text": "This is the hallucinated text 7.",
+    "explanation": "This is the explanation for hallucination 7."
+  },
+  {
+    "id": "hall-008",
+    "original_text": "This is the original text 8.",
+    "hallucinated_text": "This is the hallucinated text 8.",
+    "explanation": "This is the explanation for hallucination 8."
+  },
+  {
+    "id": "hall-009",
+    "original_text": "This is the original text 9.",
+    "hallucinated_text": "This is the hallucinated text 9.",
+    "explanation": "This is the explanation for hallucination 9."
+  },
+  {
+    "id": "hall-010",
+    "original_text": "This is the original text 10.",
+    "hallucinated_text": "This is the hallucinated text 10.",
+    "explanation": "This is the explanation for hallucination 10."
+  }
+]
