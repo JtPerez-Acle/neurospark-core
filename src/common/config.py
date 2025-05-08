@@ -4,7 +4,7 @@ import os
 from typing import Optional, Dict, Any, List
 from enum import Enum
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -40,7 +40,7 @@ class APISettings(BaseModel):
     port: int = Field(8000, description="API port")
     grpc_port: int = Field(50051, description="gRPC port")
 
-    @validator("host", pre=True)
+    @field_validator("host", mode="before")
     def validate_host(cls, v: Any) -> str:
         """Validate API host.
 
@@ -54,7 +54,7 @@ class APISettings(BaseModel):
             return os.environ.get("API_HOST", "0.0.0.0")
         return v
 
-    @validator("port", pre=True)
+    @field_validator("port", mode="before")
     def validate_port(cls, v: Any) -> int:
         """Validate API port.
 
@@ -74,7 +74,7 @@ class APISettings(BaseModel):
             return 8000
         return v
 
-    @validator("grpc_port", pre=True)
+    @field_validator("grpc_port", mode="before")
     def validate_grpc_port(cls, v: Any) -> int:
         """Validate gRPC port.
 
@@ -113,7 +113,7 @@ class DatabaseSettings(BaseModel):
         """
         return f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.db}"
 
-    @validator("host", pre=True)
+    @field_validator("host", mode="before")
     def validate_host(cls, v: Any) -> str:
         """Validate database host.
 
@@ -127,7 +127,7 @@ class DatabaseSettings(BaseModel):
             return os.environ.get("POSTGRES_HOST", "postgres")
         return v
 
-    @validator("port", pre=True)
+    @field_validator("port", mode="before")
     def validate_port(cls, v: Any) -> int:
         """Validate database port.
 
@@ -147,7 +147,7 @@ class DatabaseSettings(BaseModel):
             return 5432
         return v
 
-    @validator("db", pre=True)
+    @field_validator("db", mode="before")
     def validate_db(cls, v: Any) -> str:
         """Validate database name.
 
@@ -161,7 +161,7 @@ class DatabaseSettings(BaseModel):
             return os.environ.get("POSTGRES_DB", "neurospark")
         return v
 
-    @validator("user", pre=True)
+    @field_validator("user", mode="before")
     def validate_user(cls, v: Any) -> str:
         """Validate database user.
 
@@ -175,7 +175,7 @@ class DatabaseSettings(BaseModel):
             return os.environ.get("POSTGRES_USER", "postgres")
         return v
 
-    @validator("password", pre=True)
+    @field_validator("password", mode="before")
     def validate_password(cls, v: Any) -> str:
         """Validate database password.
 
@@ -261,7 +261,7 @@ class RedisSettings(BaseModel):
             return self.redis_url
         return f"redis://:{self.password}@{self.host}:{self.port}/0"
 
-    @validator("redis_url", pre=True)
+    @field_validator("redis_url", mode="before")
     def validate_redis_url(cls, v: Any) -> Optional[str]:
         """Validate Redis URL.
 
@@ -283,7 +283,7 @@ class LLMSettings(BaseModel):
     openai_api_key: Optional[str] = Field(None, description="OpenAI API key")
     openai_model: str = Field("gpt-4o", description="OpenAI model")
 
-    @validator("openai_api_key", pre=True)
+    @field_validator("openai_api_key", mode="before")
     def validate_openai_api_key(cls, v: Any) -> Optional[str]:
         """Validate OpenAI API key.
 
@@ -305,7 +305,7 @@ class ExternalAPISettings(BaseModel):
     newsapi_api_key: Optional[str] = Field(None, description="NewsAPI API key")
     serpapi_api_key: Optional[str] = Field(None, description="SerpAPI API key")
 
-    @validator("serpapi_api_key", pre=True)
+    @field_validator("serpapi_api_key", mode="before")
     def validate_serpapi_api_key(cls, v: Any) -> Optional[str]:
         """Validate SerpAPI API key.
 
@@ -319,7 +319,7 @@ class ExternalAPISettings(BaseModel):
             return os.environ.get("SERPAPI_API_KEY")
         return v
 
-    @validator("newsapi_api_key", pre=True)
+    @field_validator("newsapi_api_key", mode="before")
     def validate_newsapi_api_key(cls, v: Any) -> Optional[str]:
         """Validate NewsAPI API key.
 
@@ -333,7 +333,7 @@ class ExternalAPISettings(BaseModel):
             return os.environ.get("NEWSAPI_API_KEY")
         return v
 
-    @validator("openalex_api_key", pre=True)
+    @field_validator("openalex_api_key", mode="before")
     def validate_openalex_api_key(cls, v: Any) -> Optional[str]:
         """Validate OpenAlex API key.
 
@@ -355,7 +355,7 @@ class AgentSettings(BaseModel):
     custodian_schedule: str = Field("0 2 * * *", description="Custodian schedule in cron format")
     reviewer_threshold: float = Field(0.75, description="Reviewer faith score threshold")
 
-    @validator("curator_poll_interval", pre=True)
+    @field_validator("curator_poll_interval", mode="before")
     def validate_curator_poll_interval(cls, v: Any) -> int:
         """Validate curator poll interval.
 
@@ -421,7 +421,7 @@ class Settings(BaseSettings):
     config_dir: str = Field(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "config"), description="Configuration directory")
 
     # This validator is no longer needed as we have a validator in the LLMSettings class
-    # @validator("llm", pre=True)
+    # @field_validator("llm", mode="before")
     # def validate_llm(cls, v: Any) -> Dict[str, Any]:
     #     """Validate LLM settings.
     #

@@ -11,6 +11,8 @@ from src.message_bus.redis_streams import (
     StreamConfig,
 )
 
+# We'll use the actual RedisMessageBus class for testing
+
 
 @pytest.fixture
 def mock_redis_client():
@@ -39,7 +41,7 @@ def test_init_with_host_port():
             port=6379,
             password="redis_password",
         )
-        
+
         mock_client_class.assert_called_once_with(
             host="localhost",
             port=6379,
@@ -54,7 +56,7 @@ def test_init_with_url():
         message_bus = RedisMessageBus(
             url="redis://:redis_password@localhost:6379",
         )
-        
+
         mock_client_class.assert_called_once_with(
             url="redis://:redis_password@localhost:6379",
             decode_responses=True,
@@ -65,10 +67,10 @@ def test_create_stream(redis_message_bus, mock_redis_client):
     """Test creating a stream."""
     # Setup
     stream_name = "test-stream"
-    
+
     # Execute
     redis_message_bus.create_stream(stream_name)
-    
+
     # Assert
     mock_redis_client.xinfo_stream.assert_called_once_with(stream_name, full=True)
 
@@ -78,10 +80,10 @@ def test_create_stream_with_error(redis_message_bus, mock_redis_client):
     # Setup
     stream_name = "test-stream"
     mock_redis_client.xinfo_stream.side_effect = Exception("Stream does not exist")
-    
+
     # Execute
     redis_message_bus.create_stream(stream_name)
-    
+
     # Assert
     mock_redis_client.xinfo_stream.assert_called_once_with(stream_name, full=True)
     mock_redis_client.xadd.assert_called_once_with(
@@ -94,10 +96,10 @@ def test_create_consumer_group(redis_message_bus, mock_redis_client):
     # Setup
     stream_name = "test-stream"
     group_name = "test-group"
-    
+
     # Execute
     redis_message_bus.create_consumer_group(stream_name, group_name)
-    
+
     # Assert
     mock_redis_client.xgroup_create.assert_called_once_with(
         stream_name, group_name, id="0", mkstream=True
@@ -110,10 +112,10 @@ def test_create_consumer_group_with_error(redis_message_bus, mock_redis_client):
     stream_name = "test-stream"
     group_name = "test-group"
     mock_redis_client.xgroup_create.side_effect = Exception("Group already exists")
-    
+
     # Execute
     redis_message_bus.create_consumer_group(stream_name, group_name)
-    
+
     # Assert
     mock_redis_client.xgroup_create.assert_called_once_with(
         stream_name, group_name, id="0", mkstream=True
@@ -126,10 +128,10 @@ def test_publish_message(redis_message_bus, mock_redis_client):
     stream_name = "test-stream"
     message = {"key": "value"}
     mock_redis_client.xadd.return_value = "1234567890-0"
-    
+
     # Execute
     message_id = redis_message_bus.publish_message(stream_name, message)
-    
+
     # Assert
     mock_redis_client.xadd.assert_called_once_with(stream_name, message)
     assert message_id == "1234567890-0"
@@ -143,7 +145,7 @@ def test_consume_messages(redis_message_bus, mock_redis_client):
         group_name="test-group",
         consumer_name="test-consumer",
     )
-    
+
     mock_response = [
         [
             "test-stream",
@@ -154,10 +156,10 @@ def test_consume_messages(redis_message_bus, mock_redis_client):
         ]
     ]
     mock_redis_client.xreadgroup.return_value = mock_response
-    
+
     # Execute
     messages = redis_message_bus.consume_messages(stream_config, count=2)
-    
+
     # Assert
     mock_redis_client.xreadgroup.assert_called_once_with(
         groupname="test-group",
@@ -166,7 +168,7 @@ def test_consume_messages(redis_message_bus, mock_redis_client):
         count=2,
         block=None,
     )
-    
+
     assert len(messages) == 2
     assert messages[0].id == "1234567890-0"
     assert messages[0].data == {"key": "value1"}
@@ -182,7 +184,7 @@ def test_consume_messages_with_block(redis_message_bus, mock_redis_client):
         group_name="test-group",
         consumer_name="test-consumer",
     )
-    
+
     mock_response = [
         [
             "test-stream",
@@ -192,12 +194,12 @@ def test_consume_messages_with_block(redis_message_bus, mock_redis_client):
         ]
     ]
     mock_redis_client.xreadgroup.return_value = mock_response
-    
+
     # Execute
     messages = redis_message_bus.consume_messages(
         stream_config, count=1, block=1000
     )
-    
+
     # Assert
     mock_redis_client.xreadgroup.assert_called_once_with(
         groupname="test-group",
@@ -206,7 +208,7 @@ def test_consume_messages_with_block(redis_message_bus, mock_redis_client):
         count=1,
         block=1000,
     )
-    
+
     assert len(messages) == 1
     assert messages[0].id == "1234567890-0"
     assert messages[0].data == {"key": "value"}
@@ -220,12 +222,12 @@ def test_consume_messages_empty(redis_message_bus, mock_redis_client):
         group_name="test-group",
         consumer_name="test-consumer",
     )
-    
+
     mock_redis_client.xreadgroup.return_value = []
-    
+
     # Execute
     messages = redis_message_bus.consume_messages(stream_config, count=1)
-    
+
     # Assert
     mock_redis_client.xreadgroup.assert_called_once_with(
         groupname="test-group",
@@ -234,7 +236,7 @@ def test_consume_messages_empty(redis_message_bus, mock_redis_client):
         count=1,
         block=None,
     )
-    
+
     assert len(messages) == 0
 
 
@@ -244,10 +246,10 @@ def test_acknowledge_message(redis_message_bus, mock_redis_client):
     stream_name = "test-stream"
     group_name = "test-group"
     message_id = "1234567890-0"
-    
+
     # Execute
     redis_message_bus.acknowledge_message(stream_name, group_name, message_id)
-    
+
     # Assert
     mock_redis_client.xack.assert_called_once_with(
         stream_name, group_name, message_id
@@ -260,10 +262,10 @@ def test_acknowledge_messages(redis_message_bus, mock_redis_client):
     stream_name = "test-stream"
     group_name = "test-group"
     message_ids = ["1234567890-0", "1234567891-0"]
-    
+
     # Execute
     redis_message_bus.acknowledge_messages(stream_name, group_name, message_ids)
-    
+
     # Assert
     mock_redis_client.xack.assert_called_once_with(
         stream_name, group_name, *message_ids
@@ -275,7 +277,7 @@ def test_get_pending_messages(redis_message_bus, mock_redis_client):
     # Setup
     stream_name = "test-stream"
     group_name = "test-group"
-    
+
     mock_response = {
         "pending": 2,
         "min": "1234567890-0",
@@ -285,15 +287,15 @@ def test_get_pending_messages(redis_message_bus, mock_redis_client):
         },
     }
     mock_redis_client.xpending.return_value = mock_response
-    
+
     # Execute
     pending_info = redis_message_bus.get_pending_messages(stream_name, group_name)
-    
+
     # Assert
     mock_redis_client.xpending.assert_called_once_with(
         stream_name, group_name
     )
-    
+
     assert pending_info == mock_response
 
 
@@ -301,7 +303,7 @@ def test_get_stream_info(redis_message_bus, mock_redis_client):
     """Test getting stream info."""
     # Setup
     stream_name = "test-stream"
-    
+
     mock_response = {
         "length": 10,
         "radix-tree-keys": 1,
@@ -312,13 +314,13 @@ def test_get_stream_info(redis_message_bus, mock_redis_client):
         "last-entry": ["1234567899-0", {"key": "value10"}],
     }
     mock_redis_client.xinfo_stream.return_value = mock_response
-    
+
     # Execute
     stream_info = redis_message_bus.get_stream_info(stream_name)
-    
+
     # Assert
     mock_redis_client.xinfo_stream.assert_called_once_with(
         stream_name, full=True
     )
-    
+
     assert stream_info == mock_response

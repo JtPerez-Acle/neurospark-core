@@ -30,6 +30,21 @@ MOCK_MODULES = [
 ]
 
 # Create mock classes for specific types
+class MockPointStruct:
+    """Mock for qdrant_client.http.models.models.PointStruct."""
+    def __init__(self, id, vector, payload=None):
+        self.id = id
+        self.vector = vector
+        self.payload = payload or {}
+
+class MockFilter:
+    """Mock for qdrant_client.http.models.models.Filter."""
+    def __init__(self, must=None, should=None, must_not=None, min_should=None):
+        self.must = must or []
+        self.should = should or []
+        self.must_not = must_not or []
+        self.min_should = min_should
+
 class MockQdrantClient:
     def __init__(self, *args, **kwargs):
         pass
@@ -48,6 +63,38 @@ class MockPubSubWorkerThread:
 class MockResponseError(Exception):
     pass
 
+class MockRedisMessageBus:
+    def __init__(self, host=None, port=None, password=None, url=None, **kwargs):
+        self.host = host
+        self.port = port
+        self.password = password
+        self.url = url
+        self.client = MagicMock()
+
+    def create_stream(self, stream_name):
+        pass
+
+    def create_consumer_group(self, stream_name, group_name):
+        pass
+
+    def publish_message(self, stream_name, message):
+        return "message-id"
+
+    def consume_messages(self, stream_config, count=1, block=None):
+        return []
+
+    def acknowledge_message(self, stream_name, group_name, message_id):
+        pass
+
+    def acknowledge_messages(self, stream_name, group_name, message_ids):
+        pass
+
+    def get_pending_messages(self, stream_name, group_name):
+        return {}
+
+    def get_stream_info(self, stream_name):
+        return {}
+
 # Apply mocks
 for mod_name in MOCK_MODULES:
     if mod_name not in sys.modules:
@@ -56,9 +103,12 @@ for mod_name in MOCK_MODULES:
 # Set specific mock attributes
 sys.modules['qdrant_client'].QdrantClient = MockQdrantClient
 sys.modules['qdrant_client.http.models.models'].Distance = MockDistance
+sys.modules['qdrant_client.http.models.models'].PointStruct = MockPointStruct
+sys.modules['qdrant_client.http.models.models'].Filter = MockFilter
 sys.modules['portalocker.utils'].LockBase = MockLockBase
 sys.modules['redis'].client.PubSubWorkerThread = MockPubSubWorkerThread
 sys.modules['redis.exceptions'].ResponseError = MockResponseError
+sys.modules['redis'].Redis = MagicMock
 
 # Add the project root directory to the Python path
 sys.path.insert(0, str(Path(__file__).parent.parent.absolute()))
