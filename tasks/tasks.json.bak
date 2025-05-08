@@ -219,8 +219,62 @@
         1,
         2
       ],
-      "status": "pending",
-      "subtasks": []
+      "status": "done",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Design and Implement Base Agent Class",
+          "description": "Develop the foundational Agent class encapsulating configuration loading, logging, telemetry, health reporting, rate limiting, and error handling.",
+          "dependencies": [],
+          "details": "Establish a reusable base class that provides core agent functionality, ensuring extensibility for future agent types.",
+          "status": "done",
+          "testStrategy": "Unit test each component (configuration, logging, telemetry, etc.) and verify correct initialization and error handling."
+        },
+        {
+          "id": 2,
+          "title": "Develop Redis Streams Message Bus",
+          "description": "Implement the Redis Streams-based message bus, including producer/consumer patterns, message serialization/deserialization, consumer groups, dead letter queues, and retry logic.",
+          "dependencies": [
+            1
+          ],
+          "details": "Enable robust inter-agent communication with scalable message handling and fault tolerance using Redis Streams.",
+          "status": "done",
+          "testStrategy": "Integration test message flow, simulate failures for dead letter and retry logic, and validate consumer group load balancing."
+        },
+        {
+          "id": 3,
+          "title": "Define and Enforce Message Schemas",
+          "description": "Create and validate message schemas for all inter-agent communication to ensure consistency and interoperability.",
+          "dependencies": [
+            2
+          ],
+          "details": "Use schema validation tools to enforce message structure and support versioning for future extensibility.",
+          "status": "done",
+          "testStrategy": "Schema validation tests for all message types and compatibility checks across agent versions."
+        },
+        {
+          "id": 4,
+          "title": "Implement Service Discovery Mechanism",
+          "description": "Develop a service discovery system to enable agents to locate and communicate with each other dynamically.",
+          "dependencies": [
+            3
+          ],
+          "details": "Integrate with existing infrastructure or implement a lightweight registry to track active agents and their endpoints.",
+          "status": "done",
+          "testStrategy": "Functional tests for agent registration, lookup, and dynamic updates; simulate agent join/leave scenarios."
+        },
+        {
+          "id": 5,
+          "title": "Build Agent Lifecycle and Graceful Shutdown Management",
+          "description": "Implement lifecycle management for agents, including start, stop, pause, and graceful shutdown handling.",
+          "dependencies": [
+            4
+          ],
+          "details": "Ensure agents can be managed programmatically and handle shutdowns without data loss or message corruption.",
+          "status": "done",
+          "testStrategy": "Lifecycle tests covering all states and transitions, including shutdown under load and during message processing."
+        }
+      ]
     },
     {
       "id": 4,

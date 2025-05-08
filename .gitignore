@@ -85,3 +85,10 @@ elastic_data/
 # Temporary files
 tmp/
 temp/
+
+# Added by Claude Task Master
+logs
+.idea
+.vscode
+tasks.json
+tasks/ 
