@@ -14,13 +14,31 @@ logger = logging.getLogger(__name__)
 
 def get_engine() -> Engine:
     """Get a SQLAlchemy engine instance.
-    
+
     Returns:
         Engine: A SQLAlchemy engine instance.
     """
-    logger.info("Creating database engine with URL: %s", settings.database.url)
+    import os
+
+    # Check for environment variables first (highest priority)
+    host = os.environ.get("POSTGRES_HOST")
+    port = os.environ.get("POSTGRES_PORT")
+    user = os.environ.get("POSTGRES_USER")
+    password = os.environ.get("POSTGRES_PASSWORD")
+    db = os.environ.get("POSTGRES_DB")
+
+    # If environment variables are set, use them
+    if host and port and user and password and db:
+        db_url = f"postgresql://{user}:{password}@{host}:{port}/{db}"
+        logger.info("Using database URL from environment variables")
+    else:
+        # Otherwise use the settings
+        db_url = settings.database.url
+
+    logger.info("Connecting to database at: %s", db_url)
+
     return create_engine(
-        settings.database.url,
+        db_url,
         echo=settings.environment == "development",
         pool_pre_ping=True,
         pool_recycle=3600,
@@ -29,18 +47,22 @@ def get_engine() -> Engine:
 
 def create_database() -> None:
     """Create all database tables.
-    
+
     This function creates all tables defined in the models module.
     """
     logger.info("Creating database tables")
     engine = get_engine()
-    Base.metadata.create_all(engine)
-    logger.info("Database tables created successfully")
+    try:
+        Base.metadata.create_all(engine)
+        logger.info("Database tables created successfully")
+    except Exception as e:
+        logger.error(f"Error creating database tables: {e}")
+        raise
 
 
 def get_session() -> Generator[Session, None, None]:
     """Get a SQLAlchemy session.
-    
+
     Yields:
         Session: A SQLAlchemy session.
     """
@@ -55,7 +77,7 @@ def get_session() -> Generator[Session, None, None]:
 
 def get_session_sync() -> Session:
     """Get a SQLAlchemy session synchronously.
-    
+
     Returns:
         Session: A SQLAlchemy session.
     """

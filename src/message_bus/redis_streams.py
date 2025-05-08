@@ -241,11 +241,30 @@ class RedisStreamClient:
 
     async def connect(self) -> None:
         """Connect to Redis."""
+        import os
+
         if self.client is None:
+            # Check for environment variables first (highest priority)
+            redis_url = os.environ.get("REDIS_URL")
+
+            if not redis_url:
+                # Check individual components
+                host = os.environ.get("REDIS_HOST")
+                port = os.environ.get("REDIS_PORT")
+                password = os.environ.get("REDIS_PASSWORD")
+
+                if host and port and password:
+                    redis_url = f"redis://:{password}@{host}:{port}/0"
+                else:
+                    # Use the configured URL
+                    redis_url = self.redis_url
+
+            logger.info(f"Connecting to Redis at {redis_url}")
             self.client = await aioredis.from_url(
-                self.redis_url, decode_responses=True
+                redis_url, decode_responses=True
             )
-            logger.info(f"Connected to Redis at {self.redis_url}")
+            await self.client.ping()
+            logger.info(f"Successfully connected to Redis")
 
     async def disconnect(self) -> None:
         """Disconnect from Redis."""

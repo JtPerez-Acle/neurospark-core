@@ -9,7 +9,10 @@ RUN pip install --no-cache-dir \
     beautifulsoup4>=4.12.2 \
     trafilatura>=1.6.0 \
     feedparser>=6.0.10 \
-    tenacity>=8.2.2
+    tenacity>=8.2.2 \
+    gradio>=4.0.0 \
+    plotly>=5.0.0 \
+    pandas>=2.0.0
 
 # Copy Curator service code
 COPY src/agents/curator /app/src/agents/curator
@@ -17,7 +20,7 @@ COPY src/common /app/src/common
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD python -c "import os; exit(0 if os.path.exists('/tmp/curator_health') and (os.time() - os.path.getmtime('/tmp/curator_health')) < 60 else 1)"
+    CMD python -c "import os, time; exit(0 if os.path.exists('/tmp/curator_health') and (time.time() - os.path.getmtime('/tmp/curator_health')) < 60 else 1)"
 
 # Command to run the Curator agent
 CMD ["python", "-m", "src.agents.curator.main"]

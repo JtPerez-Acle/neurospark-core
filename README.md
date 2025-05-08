@@ -258,6 +258,203 @@ Agents in NeuroSpark interact using several patterns:
        # Wait or take alternative action
    ```
 
+### Enhanced Agent Communication System
+
+NeuroSpark features an advanced bidirectional communication system that enables agents to express needs, provide feedback, and collaborate effectively. This system is built on top of the base agent framework and provides specialized message types and handlers for complex agent interactions.
+
+```mermaid
+classDiagram
+    class EnhancedMessage {
+        +id: str
+        +sender: str
+        +recipient: str
+        +intent: MessageIntent
+        +payload: Dict
+        +timestamp: datetime
+        +correlation_id: Optional[str]
+        +metadata: Dict
+    }
+
+    class MessageIntent {
+        <<enumeration>>
+        DIRECT
+        BROADCAST
+        FEEDBACK
+        ASSISTANCE_REQUEST
+        NEED_EXPRESSION
+        CUSTOM
+    }
+
+    class EnhancedAgent {
+        +send_enhanced_message(message)
+        +process_message(message)
+        +_handle_message(message)
+        +_handle_feedback(message)
+        +_handle_assistance_request(message)
+        +_handle_need_expression(message)
+        +register_custom_handler(intent, handler)
+    }
+
+    class TeachingMessageMixin {
+        +initialize_teaching_handlers()
+        +_handle_knowledge_gap(message)
+        +_handle_clarification_request(message)
+        +_handle_content_delivery(message)
+    }
+
+    class NeedsExpressionMixin {
+        +express_need(need_type, details)
+        +get_expressed_needs()
+    }
+
+    class NeedsFulfillmentMixin {
+        +fulfill_need(need_id, fulfillment_data)
+    }
+
+    EnhancedAgent --> EnhancedMessage : processes
+    EnhancedMessage --> MessageIntent : has
+    EnhancedAgent <|-- TeachingMessageMixin : extends
+    EnhancedAgent <|-- NeedsExpressionMixin : extends
+    EnhancedAgent <|-- NeedsFulfillmentMixin : extends
+```
+
+#### Key Features
+
+1. **Intent-based Messaging**: Messages are categorized by intent, allowing for specialized handling
+   ```python
+   message = MessageFactory.create_direct_message(
+       sender=self.id,
+       recipient="agent-id",
+       payload={"content": "Hello!"},
+       intent=MessageIntent.DIRECT
+   )
+   await self.send_enhanced_message(message)
+   ```
+
+2. **Feedback Mechanism**: Agents can provide feedback on messages or actions
+   ```python
+   feedback = MessageFactory.create_feedback_message(
+       sender=self.id,
+       recipient="agent-id",
+       about_message_id="message-123",
+       feedback_data={"quality": "excellent", "suggestions": ["Add more examples"]}
+   )
+   await self.send_enhanced_message(feedback)
+   ```
+
+3. **Needs Expression Protocol**: Agents can express needs and have them fulfilled by other agents
+   ```python
+   # Agent expressing a need
+   await self.needs_protocol.express_need(
+       need_type="information",
+       details={"topic": "machine learning", "urgency": "high"}
+   )
+
+   # Another agent fulfilling the need
+   await self.needs_protocol.fulfill_need(
+       need_id="need-123",
+       fulfillment_data={"content": "Here's information about machine learning..."}
+   )
+   ```
+
+4. **Teaching Patterns**: Specialized communication patterns for educational interactions
+   ```python
+   # Tutor identifying a knowledge gap
+   await self.teaching_patterns.identify_knowledge_gap(
+       user_id="student123",
+       topic="machine learning",
+       context={"difficulty": "intermediate"}
+   )
+
+   # Professor responding with content
+   await self.send_enhanced_message(
+       MessageFactory.create_direct_message(
+           sender=self.id,
+           recipient="tutor-agent",
+           payload={"content": "Detailed explanation of machine learning..."},
+           intent=TeachingIntent.CONTENT_DELIVERY
+       )
+   )
+   ```
+
+5. **Custom Message Handlers**: Register handlers for custom message intents
+   ```python
+   # Register a custom handler
+   self.register_custom_handler(
+       "CUSTOM_INTENT",
+       self._handle_custom_message
+   )
+
+   # Define the handler
+   async def _handle_custom_message(self, message):
+       # Process the custom message
+       pass
+   ```
+
+#### Using the Enhanced Agent Communication System
+
+To use the enhanced agent communication system in your agents:
+
+1. **Extend the EnhancedAgent class**:
+   ```python
+   class MyAgent(EnhancedAgent):
+       def __init__(self, agent_id, name, dependencies):
+           super().__init__(agent_id, name, dependencies)
+   ```
+
+2. **Add specialized mixins for specific capabilities**:
+   ```python
+   class MyTeachingAgent(EnhancedAgent, TeachingMessageMixin):
+       def __init__(self, agent_id, name, dependencies):
+           super().__init__(agent_id, name, dependencies)
+           # Initialize teaching patterns
+           self.teaching_patterns = TeachingPatterns(self)
+   ```
+
+3. **Initialize message handlers**:
+   ```python
+   async def initialize(self):
+       await super().initialize()
+       # For teaching agents
+       await self.initialize_teaching_handlers()
+   ```
+
+4. **Implement custom message handlers**:
+   ```python
+   async def _handle_content_delivery(self, message):
+       # Process content delivery message
+       content = message.payload.get("content")
+       # Use the content...
+   ```
+
+5. **Send enhanced messages**:
+   ```python
+   response = MessageFactory.create_direct_message(
+       sender=self.id,
+       recipient=message.sender,
+       payload={"answer": "The answer to your question is..."},
+       intent="CLARIFICATION_RESPONSE",
+       correlation_id=message.id
+   )
+   await self.send_enhanced_message(response)
+   ```
+
+#### Demo Scripts
+
+The repository includes two demo scripts to demonstrate the enhanced agent communication system:
+
+1. **Simple Demo** (`examples/agent_communication_demo.py`): Demonstrates the basic functionality using a mock message bus
+   ```bash
+   python examples/agent_communication_demo.py
+   ```
+
+2. **End-to-End Demo** (`examples/e2e_agent_communication.py`): Shows a complete example using Redis in Docker
+   ```bash
+   python examples/e2e_agent_communication.py
+   ```
+
+These demos showcase how agents can identify knowledge gaps, request clarifications, deliver content, and provide feedback in a bidirectional communication flow.
+
 ## Tech Stack
 
 | Layer | Choice | Why / Escape Hatch | Status |
@@ -284,13 +481,16 @@ pie
 The following components have been fully implemented and tested:
 
 1. **Agent Framework**: The core agent framework with base Agent class, LLMAgent, AgentManager, AgentRegistry, and AgentFactory.
-2. **Message Bus**: Redis Streams-based message bus for agent communication.
-3. **Vector Store**: Qdrant integration for vector storage and retrieval.
-4. **Database**: PostgreSQL integration with SQLAlchemy ORM.
-5. **Storage**: MinIO integration for blob storage.
-6. **Search**: ElasticSearch integration for text search.
-7. **Configuration**: Environment-based configuration with Pydantic models.
-8. **Health Checks**: Health check system for monitoring service status.
+2. **Enhanced Agent Communication**: Bidirectional communication system with specialized message types and handlers.
+3. **Teaching Patterns**: Communication patterns for educational interactions between agents.
+4. **Needs Expression Protocol**: System for agents to express needs and have them fulfilled by other agents.
+5. **Message Bus**: Redis Streams-based message bus for agent communication.
+6. **Vector Store**: Qdrant integration for vector storage and retrieval.
+7. **Database**: PostgreSQL integration with SQLAlchemy ORM.
+8. **Storage**: MinIO integration for blob storage.
+9. **Search**: ElasticSearch integration for text search.
+10. **Configuration**: Environment-based configuration with Pydantic models.
+11. **Health Checks**: Health check system for monitoring service status.
 
 ## Agent Configuration and Deployment
 
@@ -843,6 +1043,9 @@ graph TD
 | Component | Coverage | Notes |
 |-----------|----------|-------|
 | **Agent Framework** | 91% | Base Agent class |
+| **Enhanced Agent** | 54% | Enhanced communication system |
+| **Needs Protocol** | 88% | Needs expression and fulfillment |
+| **Teaching Patterns** | 73% | Educational interaction patterns |
 | **Agent Factory** | 95% | Agent creation from config |
 | **Agent Manager** | 86% | Agent lifecycle management |
 | **Agent Registry** | 86% | Service discovery |

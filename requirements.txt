@@ -18,6 +18,9 @@ pydantic-ai>=0.1.0
 # Vector database
 qdrant-client>=1.4.0
 
+# Search
+elasticsearch>=8.9.0
+
 # Storage
 minio>=7.1.15
 

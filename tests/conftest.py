@@ -5,10 +5,60 @@ import sys
 import logging
 from pathlib import Path
 from typing import Dict, Any, Generator
+from unittest.mock import MagicMock
 
 import pytest
 from _pytest.config import Config
 from _pytest.fixtures import FixtureRequest
+
+# Mock problematic modules
+MOCK_MODULES = [
+    'qdrant_client',
+    'qdrant_client.http',
+    'qdrant_client.http.models',
+    'qdrant_client.http.models.models',
+    'qdrant_client.local',
+    'qdrant_client.local.async_qdrant_local',
+    'qdrant_client.async_qdrant_client',
+    'portalocker',
+    'portalocker.redis',
+    'portalocker.utils',
+    'redis',
+    'redis.client',
+    'redis.asyncio',
+    'redis.exceptions',
+]
+
+# Create mock classes for specific types
+class MockQdrantClient:
+    def __init__(self, *args, **kwargs):
+        pass
+
+class MockDistance:
+    COSINE = "cosine"
+    EUCLID = "euclid"
+    DOT = "dot"
+
+class MockLockBase:
+    pass
+
+class MockPubSubWorkerThread:
+    pass
+
+class MockResponseError(Exception):
+    pass
+
+# Apply mocks
+for mod_name in MOCK_MODULES:
+    if mod_name not in sys.modules:
+        sys.modules[mod_name] = MagicMock()
+
+# Set specific mock attributes
+sys.modules['qdrant_client'].QdrantClient = MockQdrantClient
+sys.modules['qdrant_client.http.models.models'].Distance = MockDistance
+sys.modules['portalocker.utils'].LockBase = MockLockBase
+sys.modules['redis'].client.PubSubWorkerThread = MockPubSubWorkerThread
+sys.modules['redis.exceptions'].ResponseError = MockResponseError
 
 # Add the project root directory to the Python path
 sys.path.insert(0, str(Path(__file__).parent.parent.absolute()))

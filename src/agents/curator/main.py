@@ -35,23 +35,23 @@ logger = logging.getLogger(__name__)
 async def main():
     """Run the Curator Agent."""
     logger.info("Starting Curator Agent")
-    
+
     # Load settings
     settings = Settings()
-    
+
     # Create database tables if they don't exist
     create_database()
-    
+
     # Connect to Redis
-    redis_client = RedisStreamClient(url=settings.redis_url)
+    redis_client = RedisStreamClient(url=settings.redis.url)
     await redis_client.connect()
-    
+
     # Create agent dependencies
     dependencies = AgentDependencies(
         settings=settings,
         message_bus=redis_client,
     )
-    
+
     # Create agent configuration
     config = CuratorAgentConfig(
         refresh_interval=settings.agent_settings.curator_poll_interval,
@@ -89,7 +89,7 @@ async def main():
             )
         ]
     )
-    
+
     # Create agent
     agent = CuratorAgent(
         agent_id=f"curator-{uuid.uuid4().hex[:8]}",
@@ -97,46 +97,80 @@ async def main():
         dependencies=dependencies,
         config=config,
     )
-    
+
     # Set up signal handlers
     loop = asyncio.get_running_loop()
     for sig in (signal.SIGINT, signal.SIGTERM):
         loop.add_signal_handler(sig, lambda: asyncio.create_task(shutdown(agent, redis_client)))
-    
+
     # Start agent
     await agent.start()
-    
+
     # Create health check file
     health_file = "/tmp/curator_health"
-    with open(health_file, "w") as f:
-        f.write("healthy")
-    
-    # Keep the agent running
     try:
-        while True:
+        with open(health_file, "w") as f:
+            f.write("healthy")
+        logger.info(f"Created health check file at {health_file}")
+    except Exception as e:
+        logger.warning(f"Failed to create health check file: {e}")
+
+    # Run initial document discovery
+    try:
+        # Discover documents from all sources
+        documents = await agent.discover_documents()
+
+        # If we found at least one document, consider it a success
+        if documents:
+            logger.info(f"Successfully discovered {len(documents)} documents. Exiting with success.")
+            # Clean up and exit
+            await shutdown(agent, redis_client)
+            return
+        else:
+            logger.warning("No documents were discovered from any source.")
+    except Exception as e:
+        logger.exception(f"Error during initial document discovery: {e}")
+
+    # If we get here, either no documents were found or an error occurred
+    # Keep the agent running for a while in case it's a temporary issue
+    try:
+        # Run for a limited time (5 minutes) then exit
+        for _ in range(10):  # 10 iterations * 30 seconds = 5 minutes
             # Update health check file
-            with open(health_file, "w") as f:
-                f.write("healthy")
-            
+            try:
+                with open(health_file, "w") as f:
+                    f.write("healthy")
+            except Exception as e:
+                logger.warning(f"Failed to update health check file: {e}")
+
             await asyncio.sleep(30)
+
+        logger.info("Exiting after waiting period")
     except asyncio.CancelledError:
         logger.info("Agent task cancelled")
     finally:
         # Clean up health check file
-        if os.path.exists(health_file):
-            os.remove(health_file)
+        try:
+            if os.path.exists(health_file):
+                os.remove(health_file)
+                logger.info(f"Removed health check file at {health_file}")
+        except Exception as e:
+            logger.warning(f"Failed to remove health check file: {e}")
+
+        # Clean up and exit
+        await shutdown(agent, redis_client)
 
 
 async def shutdown(agent, redis_client):
     """Shutdown the agent gracefully."""
     logger.info("Shutting down Curator Agent")
-    
+
     # Stop the agent
     await agent.stop()
-    
+
     # Disconnect from Redis
     await redis_client.disconnect()
-    
+
     # Exit the process
     sys.exit(0)
 

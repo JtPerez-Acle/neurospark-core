@@ -41,7 +41,7 @@ Begin by writing tests that validate API connectivity, authentication, response 
 ### Details:
 Write tests to ensure that discovery strategies return relevant, non-duplicate documents and handle edge cases such as empty results or API-specific quirks. Implement strategies to pass these tests.
 
-## 3. Design and Test Metadata Extraction and Credibility Scoring [in-progress]
+## 3. Design and Test Metadata Extraction and Credibility Scoring [done]
 ### Dependencies: 4.2
 ### Description: Extract and normalize metadata from discovered documents and implement a system to score source credibility.
 ### Details:

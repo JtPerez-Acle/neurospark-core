@@ -40,6 +40,60 @@ class APISettings(BaseModel):
     port: int = Field(8000, description="API port")
     grpc_port: int = Field(50051, description="gRPC port")
 
+    @validator("host", pre=True)
+    def validate_host(cls, v: Any) -> str:
+        """Validate API host.
+
+        Args:
+            v: The value to validate.
+
+        Returns:
+            str: The validated value.
+        """
+        if not v:
+            return os.environ.get("API_HOST", "0.0.0.0")
+        return v
+
+    @validator("port", pre=True)
+    def validate_port(cls, v: Any) -> int:
+        """Validate API port.
+
+        Args:
+            v: The value to validate.
+
+        Returns:
+            int: The validated value.
+        """
+        if not v:
+            env_value = os.environ.get("API_PORT")
+            if env_value:
+                try:
+                    return int(env_value)
+                except ValueError:
+                    pass
+            return 8000
+        return v
+
+    @validator("grpc_port", pre=True)
+    def validate_grpc_port(cls, v: Any) -> int:
+        """Validate gRPC port.
+
+        Args:
+            v: The value to validate.
+
+        Returns:
+            int: The validated value.
+        """
+        if not v:
+            env_value = os.environ.get("GRPC_PORT")
+            if env_value:
+                try:
+                    return int(env_value)
+                except ValueError:
+                    pass
+            return 50051
+        return v
+
 
 class DatabaseSettings(BaseModel):
     """Database settings."""
@@ -58,6 +112,82 @@ class DatabaseSettings(BaseModel):
             str: The database URL.
         """
         return f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.db}"
+
+    @validator("host", pre=True)
+    def validate_host(cls, v: Any) -> str:
+        """Validate database host.
+
+        Args:
+            v: The value to validate.
+
+        Returns:
+            str: The validated value.
+        """
+        if not v:
+            return os.environ.get("POSTGRES_HOST", "postgres")
+        return v
+
+    @validator("port", pre=True)
+    def validate_port(cls, v: Any) -> int:
+        """Validate database port.
+
+        Args:
+            v: The value to validate.
+
+        Returns:
+            int: The validated value.
+        """
+        if not v:
+            env_value = os.environ.get("POSTGRES_PORT")
+            if env_value:
+                try:
+                    return int(env_value)
+                except ValueError:
+                    pass
+            return 5432
+        return v
+
+    @validator("db", pre=True)
+    def validate_db(cls, v: Any) -> str:
+        """Validate database name.
+
+        Args:
+            v: The value to validate.
+
+        Returns:
+            str: The validated value.
+        """
+        if not v:
+            return os.environ.get("POSTGRES_DB", "neurospark")
+        return v
+
+    @validator("user", pre=True)
+    def validate_user(cls, v: Any) -> str:
+        """Validate database user.
+
+        Args:
+            v: The value to validate.
+
+        Returns:
+            str: The validated value.
+        """
+        if not v:
+            return os.environ.get("POSTGRES_USER", "postgres")
+        return v
+
+    @validator("password", pre=True)
+    def validate_password(cls, v: Any) -> str:
+        """Validate database password.
+
+        Args:
+            v: The value to validate.
+
+        Returns:
+            str: The validated value.
+        """
+        if not v:
+            return os.environ.get("POSTGRES_PASSWORD", "postgres_password")
+        return v
 
 
 class QdrantSettings(BaseModel):
@@ -118,6 +248,7 @@ class RedisSettings(BaseModel):
     host: str = Field("redis", description="Redis host")
     port: int = Field(6379, description="Redis port")
     password: str = Field("redis_password", description="Redis password")
+    redis_url: Optional[str] = Field(None, description="Redis URL")
 
     @property
     def url(self) -> str:
@@ -126,7 +257,23 @@ class RedisSettings(BaseModel):
         Returns:
             str: The Redis URL.
         """
+        if self.redis_url:
+            return self.redis_url
         return f"redis://:{self.password}@{self.host}:{self.port}/0"
+
+    @validator("redis_url", pre=True)
+    def validate_redis_url(cls, v: Any) -> Optional[str]:
+        """Validate Redis URL.
+
+        Args:
+            v: The value to validate.
+
+        Returns:
+            Optional[str]: The validated value.
+        """
+        if not v:
+            return os.environ.get("REDIS_URL")
+        return v
 
 
 class LLMSettings(BaseModel):
@@ -136,6 +283,20 @@ class LLMSettings(BaseModel):
     openai_api_key: Optional[str] = Field(None, description="OpenAI API key")
     openai_model: str = Field("gpt-4o", description="OpenAI model")
 
+    @validator("openai_api_key", pre=True)
+    def validate_openai_api_key(cls, v: Any) -> Optional[str]:
+        """Validate OpenAI API key.
+
+        Args:
+            v: The value to validate.
+
+        Returns:
+            Optional[str]: The validated value.
+        """
+        if not v:
+            return os.environ.get("OPENAI_API_KEY")
+        return v
+
 
 class ExternalAPISettings(BaseModel):
     """External API settings."""
@@ -144,6 +305,48 @@ class ExternalAPISettings(BaseModel):
     newsapi_api_key: Optional[str] = Field(None, description="NewsAPI API key")
     serpapi_api_key: Optional[str] = Field(None, description="SerpAPI API key")
 
+    @validator("serpapi_api_key", pre=True)
+    def validate_serpapi_api_key(cls, v: Any) -> Optional[str]:
+        """Validate SerpAPI API key.
+
+        Args:
+            v: The value to validate.
+
+        Returns:
+            Optional[str]: The validated value.
+        """
+        if not v:
+            return os.environ.get("SERPAPI_API_KEY")
+        return v
+
+    @validator("newsapi_api_key", pre=True)
+    def validate_newsapi_api_key(cls, v: Any) -> Optional[str]:
+        """Validate NewsAPI API key.
+
+        Args:
+            v: The value to validate.
+
+        Returns:
+            Optional[str]: The validated value.
+        """
+        if not v:
+            return os.environ.get("NEWSAPI_API_KEY")
+        return v
+
+    @validator("openalex_api_key", pre=True)
+    def validate_openalex_api_key(cls, v: Any) -> Optional[str]:
+        """Validate OpenAlex API key.
+
+        Args:
+            v: The value to validate.
+
+        Returns:
+            Optional[str]: The validated value.
+        """
+        if not v:
+            return os.environ.get("OPENALEX_API_KEY")
+        return v
+
 
 class AgentSettings(BaseModel):
     """Agent settings."""
@@ -151,6 +354,26 @@ class AgentSettings(BaseModel):
     curator_poll_interval: int = Field(3600, description="Curator poll interval in seconds")
     custodian_schedule: str = Field("0 2 * * *", description="Custodian schedule in cron format")
     reviewer_threshold: float = Field(0.75, description="Reviewer faith score threshold")
+
+    @validator("curator_poll_interval", pre=True)
+    def validate_curator_poll_interval(cls, v: Any) -> int:
+        """Validate curator poll interval.
+
+        Args:
+            v: The value to validate.
+
+        Returns:
+            int: The validated value.
+        """
+        if not v:
+            env_value = os.environ.get("CURATOR_POLL_INTERVAL")
+            if env_value:
+                try:
+                    return int(env_value)
+                except ValueError:
+                    pass
+            return 3600
+        return v
 
 
 class ResourceLimits(BaseModel):
@@ -186,10 +409,10 @@ class Settings(BaseSettings):
     llm: LLMSettings = Field(default_factory=LLMSettings, description="LLM settings")
 
     # External API settings
-    external_apis: ExternalAPISettings = Field(default_factory=ExternalAPISettings, description="External API settings")
+    external_api_settings: ExternalAPISettings = Field(default_factory=ExternalAPISettings, description="External API settings")
 
     # Agent settings
-    agents: AgentSettings = Field(default_factory=AgentSettings, description="Agent settings")
+    agent_settings: AgentSettings = Field(default_factory=AgentSettings, description="Agent settings")
 
     # Resource limits
     resource_limits: ResourceLimits = Field(default_factory=ResourceLimits, description="Resource limits")
@@ -197,25 +420,26 @@ class Settings(BaseSettings):
     # Configuration directory
     config_dir: str = Field(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "config"), description="Configuration directory")
 
-    @validator("llm", pre=True)
-    def validate_llm(cls, v: Any) -> Dict[str, Any]:
-        """Validate LLM settings.
-
-        Args:
-            v: The value to validate.
-
-        Returns:
-            Dict[str, Any]: The validated value.
-
-        Raises:
-            ValueError: If the OpenAI API key is missing when using OpenAI.
-        """
-        if isinstance(v, dict):
-            if v.get("provider") == LLMProvider.OPENAI and not v.get("openai_api_key"):
-                v["openai_api_key"] = os.environ.get("OPENAI_API_KEY")
-                if not v["openai_api_key"]:
-                    raise ValueError("OpenAI API key is required when using OpenAI provider")
-        return v
+    # This validator is no longer needed as we have a validator in the LLMSettings class
+    # @validator("llm", pre=True)
+    # def validate_llm(cls, v: Any) -> Dict[str, Any]:
+    #     """Validate LLM settings.
+    #
+    #     Args:
+    #         v: The value to validate.
+    #
+    #     Returns:
+    #         Dict[str, Any]: The validated value.
+    #
+    #     Raises:
+    #         ValueError: If the OpenAI API key is missing when using OpenAI.
+    #     """
+    #     if isinstance(v, dict):
+    #         if v.get("provider") == LLMProvider.OPENAI and not v.get("openai_api_key"):
+    #             v["openai_api_key"] = os.environ.get("OPENAI_API_KEY")
+    #             if not v["openai_api_key"]:
+    #                 raise ValueError("OpenAI API key is required when using OpenAI provider")
+    #     return v
 
     def get_service_urls(self) -> Dict[str, str]:
         """Get all service URLs.

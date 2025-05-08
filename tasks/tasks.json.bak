@@ -286,8 +286,62 @@
       "dependencies": [
         3
       ],
-      "status": "pending",
-      "subtasks": []
+      "status": "in-progress",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Develop and Test API Clients for Data Sources",
+          "description": "Create robust API clients for OpenAlex, NewsAPI, and SerpAPI, ensuring support for authentication, parameterization, and response validation.",
+          "dependencies": [],
+          "details": "Begin by writing tests that validate API connectivity, authentication, response structure, and error handling for each data source. Implement the clients to pass these tests, following best practices for API client development and test automation.",
+          "status": "done",
+          "testStrategy": "Write unit and integration tests for each API client, including tests for successful data retrieval, authentication failures, rate limiting, and malformed responses."
+        },
+        {
+          "id": 2,
+          "title": "Implement and Test Document Discovery Strategies",
+          "description": "Design and validate strategies for discovering relevant documents from each source, including query formulation and filtering.",
+          "dependencies": [
+            1
+          ],
+          "details": "Write tests to ensure that discovery strategies return relevant, non-duplicate documents and handle edge cases such as empty results or API-specific quirks. Implement strategies to pass these tests.",
+          "status": "done",
+          "testStrategy": "Create tests for various discovery scenarios, including keyword searches, date filtering, and handling of paginated results."
+        },
+        {
+          "id": 3,
+          "title": "Design and Test Metadata Extraction and Credibility Scoring",
+          "description": "Extract and normalize metadata from discovered documents and implement a system to score source credibility.",
+          "dependencies": [
+            2
+          ],
+          "details": "Write tests to verify correct extraction and normalization of metadata fields (e.g., title, author, date, source) and to validate the credibility scoring logic against known trusted and untrusted sources.",
+          "status": "done",
+          "testStrategy": "Unit tests for metadata extraction functions and credibility scoring algorithms, including edge cases and malformed input."
+        },
+        {
+          "id": 4,
+          "title": "Implement and Test Scheduling, Rate Limiting, and Fallback Mechanisms",
+          "description": "Develop logic for periodic document discovery, enforce API rate limits, and add fallback mechanisms for handling API outages.",
+          "dependencies": [
+            3
+          ],
+          "details": "Write tests to ensure scheduled tasks trigger as expected, rate limits are respected, and fallback mechanisms activate during API failures.",
+          "status": "pending",
+          "testStrategy": "Integration tests for scheduling intervals, simulated rate limit exceedance, and API outage scenarios."
+        },
+        {
+          "id": 5,
+          "title": "Develop and Test Gradio-Based Monitoring Interface",
+          "description": "Create a Gradio interface to visualize the Curator Agent's real-time activity, including discovered documents, source status, and system metrics.",
+          "dependencies": [
+            4
+          ],
+          "details": "Write tests to verify that the interface displays accurate, up-to-date information and handles user interactions correctly.",
+          "status": "pending",
+          "testStrategy": "UI tests for Gradio components, data refresh logic, and error handling in the interface."
+        }
+      ]
     },
     {
       "id": 5,
@@ -523,6 +577,17 @@
           "testStrategy": "Verify by checking generated documentation and metrics after pipeline runs to ensure accuracy and completeness."
         }
       ]
+    },
+    {
+      "id": 16,
+      "title": "Implement Enhanced Bidirectional Communication Framework for Agents",
+      "description": "Develop a robust bidirectional communication framework within NeuroSpark Core, enabling agents to provide feedback and express needs to each other for effective task completion. This should extend the existing Agent base class to ensure specialized agents remain lightweight and maintainable.",
+      "details": "Design and implement a communication protocol that allows agents to send, receive, and process structured messages, including feedback and explicit needs, to and from other agents. Extend the Agent base class with new methods for message handling, feedback loops, and need expression, ensuring that message passing is asynchronous and supports both direct and broadcast communication patterns. Incorporate mechanisms for agents to reason over received communications and past interactions, drawing inspiration from structured attentive reasoning frameworks to enable richer collaborative behaviors. Ensure the framework is extensible, supports minimal boilerplate for specialized agents, and includes hooks for monitoring and debugging inter-agent exchanges. Provide comprehensive documentation and usage examples for developers implementing new agent types.",
+      "testStrategy": "Develop unit and integration tests covering all new communication APIs, including message sending, receiving, feedback handling, and need expression. Simulate multi-agent scenarios where agents must coordinate to complete tasks, verifying that feedback and needs are correctly communicated and acted upon. Test for edge cases such as message loss, agent failures, and high communication loads. Validate that specialized agent implementations remain concise and maintainable by reviewing code size and complexity before and after integration. Include performance benchmarks to ensure the communication framework does not introduce significant overhead.",
+      "status": "pending",
+      "dependencies": [],
+      "priority": "medium",
+      "subtasks": []
     }
   ]
 }

@@ -41,6 +41,27 @@ services:
       - api
       - redis
       - minio
+    ports:
+      - "7860:7860"  # For Gradio interface
+    networks:
+      - neurospark-network
+
+  # Curator Monitor
+  curator-monitor:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.curator
+    volumes:
+      - ./src:/app/src
+    env_file:
+      - .env
+    depends_on:
+      - curator
+      - redis
+      - postgres
+    ports:
+      - "7861:7860"  # For Gradio interface
+    command: ["python", "-m", "src.agents.curator.monitor"]
     networks:
       - neurospark-network
 
