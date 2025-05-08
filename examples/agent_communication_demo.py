@@ -53,7 +53,7 @@ class MockMessageBus(MessageBus):
         """Disconnect from the message bus."""
         logger.info("Disconnected from mock message bus")
 
-    async def publish(self, topic: str, message: Dict) -> None:
+    async def publish_message(self, topic: str, message: Dict) -> None:
         """Publish a message to a topic."""
         logger.info(f"Publishing message to {topic}: {message}")
         if topic not in self.messages:
@@ -72,11 +72,22 @@ class MockMessageBus(MessageBus):
             self.subscribers[topic] = []
         self.subscribers[topic].append(callback)
 
-    async def unsubscribe(self, topic: str, callback) -> None:
-        """Unsubscribe from a topic."""
+    async def unsubscribe(self, topic: str, callback=None) -> None:
+        """Unsubscribe from a topic.
+
+        Args:
+            topic: The topic to unsubscribe from.
+            callback: Optional callback to remove. If None, removes all callbacks.
+        """
         logger.info(f"Unsubscribing from {topic}")
-        if topic in self.subscribers and callback in self.subscribers[topic]:
-            self.subscribers[topic].remove(callback)
+        if callback is None:
+            # Remove all callbacks for this topic
+            if topic in self.subscribers:
+                self.subscribers.pop(topic)
+        else:
+            # Remove specific callback
+            if topic in self.subscribers and callback in self.subscribers[topic]:
+                self.subscribers[topic].remove(callback)
 
 
 class AgentDependencies:
@@ -115,7 +126,7 @@ class TutorAgent(EnhancedAgent, TeachingMessageMixin):
         """Handle a content delivery message."""
         logger.info(f"Received content: {message.payload['content']}")
         self.received_content.append(message.payload)
-        
+
         # Send feedback about the content
         feedback = MessageFactory.create_feedback_message(
             sender=self.id,
@@ -127,7 +138,7 @@ class TutorAgent(EnhancedAgent, TeachingMessageMixin):
                 "suggestions": ["Add more examples", "Include visual aids"],
             },
         )
-        
+
         await self.send_enhanced_message(feedback)
 
 
@@ -180,16 +191,16 @@ class ProfessorAgent(EnhancedAgent, TeachingMessageMixin):
         )
 
         await self.send_enhanced_message(response)
-    
+
     async def _handle_clarification_request(self, message: EnhancedMessage) -> None:
         """Handle a clarification request message."""
         logger.info(f"Received clarification request: {message.payload}")
-        
+
         # Create clarification response
         topic = message.payload.get("topic")
         question = message.payload.get("question")
         answer = f"Clarification for '{question}' regarding {topic}: Here's a detailed explanation..."
-        
+
         # Send clarification back to the requester
         response = MessageFactory.create_direct_message(
             sender=self.id,
@@ -202,9 +213,9 @@ class ProfessorAgent(EnhancedAgent, TeachingMessageMixin):
             intent=TeachingIntent.CLARIFICATION_RESPONSE,
             correlation_id=message.id,
         )
-        
+
         await self.send_enhanced_message(response)
-    
+
     async def _handle_feedback(self, message: EnhancedMessage) -> None:
         """Handle a feedback message."""
         logger.info(f"Received feedback: {message.payload}")
@@ -217,15 +228,15 @@ async def run_demo():
     settings = Settings()
     message_bus = MockMessageBus()
     dependencies = AgentDependencies(settings, message_bus)
-    
+
     # Create agents
     tutor = TutorAgent("tutor-agent", "Tutor Agent", dependencies)
     professor = ProfessorAgent("professor-agent", "Professor Agent", dependencies)
-    
+
     # Initialize agents
     await tutor.initialize()
     await professor.initialize()
-    
+
     # Demonstrate knowledge gap identification
     logger.info("\n=== Knowledge Gap Identification ===")
     await tutor.teaching_patterns.identify_knowledge_gap(
@@ -233,10 +244,10 @@ async def run_demo():
         topic="machine learning",
         context={"user_waiting": True, "difficulty": "intermediate"},
     )
-    
+
     # Wait for message processing
     await asyncio.sleep(1)
-    
+
     # Demonstrate clarification request
     logger.info("\n=== Clarification Request ===")
     await tutor.teaching_patterns.request_clarification(
@@ -244,16 +255,16 @@ async def run_demo():
         topic="machine learning",
         question="What is backpropagation?",
     )
-    
+
     # Wait for message processing
     await asyncio.sleep(1)
-    
+
     # Print results
     logger.info("\n=== Results ===")
     logger.info(f"Professor content requests: {len(professor.content_requests)}")
     logger.info(f"Tutor received content: {len(tutor.received_content)}")
     logger.info(f"Professor feedback received: {len(professor.feedback_received)}")
-    
+
     # Clean up
     await tutor.cleanup()
     await professor.cleanup()
